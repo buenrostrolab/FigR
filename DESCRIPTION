@@ -10,7 +10,7 @@ cis-regulatory elements linked to gene to define domains of regulatory chromatin
 URL: https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1
 BugReports: https://github.com/buenrostrolab/FigR/issues
 Imports: Matrix, SummarizedExperiment, GenomicRanges, dplyr, ggplot2
-Depends: Matrix, SummarizedExperiment, dplyr, chromVAR, doParallel, doSNOW, ggplot2, ggrepel, ComplexHeatmap, BuenColors, pbmcapply, scales, reshape2
+Depends: Matrix, SummarizedExperiment, dplyr, chromVAR, doParallel, doSNOW, ggplot2, ggrepel, ComplexHeatmap, BuenColors, pbmcapply, scales, reshape2, Rmpfr
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true

@@ -134,7 +134,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
   doSNOW::registerDoSNOW(cl)
   mZtest.list <- foreach(g=dorcGenes,
                          .options.snow = opts,
-                         .packages = c("BuenRTools", "dplyr","Matrix")) %dopar%   {
+                         .packages = c("FigR", "dplyr","Matrix","Rmpfr")) %dopar%   {
                            # Take peaks associated with gene and its k neighbors
                            # Pool and use union for motif enrichment
                            DORCNNpeaks <- unique(dorcTab$Peak[dorcTab$Gene %in% c(g,dorcGenes[DORC.knn[g,]])])
@@ -232,7 +232,7 @@ rankDrivers <- function(figR.d,
       score.cut <- 1
     }
 
-    message("Using absolute score of: ",score.cut," ..\n")
+    message("Using absolute score cut-off of: ",score.cut," ..\n")
 
     # Prep summary stats
     figR.summ <- figR.d %>%
@@ -324,7 +324,6 @@ plotDrivers <- function(figR.d,
 #'@import dplyr ComplexHeatmap BuenColors scales reshape2 tibble circlize
 #'@export
 #'@author Vinay Kartha
-
 plotfigRHeatmap <- function(figR.d,
                             score.cut=1,
                             DORCs=NULL,
@@ -332,6 +331,8 @@ plotfigRHeatmap <- function(figR.d,
                             ... # Additional params passed to ComplexHeatmap
 ){
 
+
+  message("Using absolute score cut-off of: ",score.cut," ..\n")
 
   DORCsToKeep <- figR.d %>% filter(abs(Score) >= score.cut) %>% pull(DORC) %>% unique()
   TFsToKeep <- figR.d %>% filter(abs(Score) >= score.cut) %>% pull(Motif) %>% unique()
@@ -361,13 +362,13 @@ plotfigRHeatmap <- function(figR.d,
 
   # Heatmap view
 
-  myCols <- circlize::colorRamp2(seq(-2,2,length.out = 9),colors = jdb_palette("solar_flare"))
-  myHeat <- Heatmap(net.d,
-          col=myCols,
-          clustering_distance_rows = "pearson",
-          clustering_distance_columns = "pearson",
-          name="Score",border = TRUE,
-          row_names_gp = gpar(fontsize=5,fontface="italic"),...)
+  myCols <- circlize::colorRamp2(seq(-2,2,length.out = 9),colors = BuenColors::jdb_palette("solar_flare"))
+  myHeat <- ComplexHeatmap::Heatmap(net.d,
+                                    col=myCols,
+                                    clustering_distance_rows = "pearson",
+                                    clustering_distance_columns = "pearson",
+                                    name="Score",border = TRUE,
+                                    row_names_gp = gpar(fontsize=5,fontface="italic"),...)
 
   myHeat
 
