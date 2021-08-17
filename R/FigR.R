@@ -11,7 +11,7 @@
 #'@param dorcK numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30 (set to ~3 % of total DORCs determined).
 #'@param dorcTab data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE (peak set) was used when determinin DORCs that is used here to get corresponding DORC peak counts
 #'@param n_bg number of background peaks to use for
-#'@param genome
+#'@param genome character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package (e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]} for hg19)
 #'@param dorcMat Matrix object of smoothed single-cell DORC accessibility scores
 #'@param rnaMat Matrix object of smoothed single-cell RNA expression values
 #'@param dorcGenes character vector specifying the subset of DORCs to test, if not running on everything
@@ -70,7 +70,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
   DORC.knn <- FNN::get.knn(data = t(scale(Matrix::t(dorcMat))),k = dorcK)$nn.index # Scaled
   rownames(DORC.knn) <- rownames(dorcMat)
 
-  if (is.null(rowData(ATAC.se)$bias)) {
+  if (is.null(SummarizedExperiment::rowData(ATAC.se)$bias)) {
     if (genome %in% "hg19")
       myGenome <- BSgenome.Hsapiens.UCSC.hg19::BSgenome.Hsapiens.UCSC.hg19
     if (genome %in% "mm10")
@@ -88,7 +88,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
 
   # Old motif naming convention
   if(all(grepl("_",names(pwm),fixed = TRUE)))
-     names(pwm) <- extractTFNames(names(pwm))
+     names(pwm) <- FigR::extractTFNames(names(pwm))
 
   message("Removing genes with 0 expression across cells ..\n")
   rnaMat <- rnaMat[Matrix::rowSums(rnaMat)!=0,]
@@ -142,9 +142,10 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
                            if(usePeakNames)
                              DORCNNpeaks <- which(rownames(ATAC.se) %in% DORCNNpeaks) # Convert to index relative to input
 
-                           mZ <- motifPeakZtest(peakSet = DORCNNpeaks,
+                           mZ <- FigR::motifPeakZtest(peakSet = DORCNNpeaks,
                                                 bgPeaks = bg,
                                                 tfMat = assay(motif_ix))
+
                            mZ <- mZ[,c("gene","z_test")]
                            colnames(mZ)[1] <- "Motif"
                            colnames(mZ)[2] <- "Enrichment.Z"
@@ -154,6 +155,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
                            # Correlate smoothed dorc with smoothed expression, with spearman
                            corr.r <- cor(dorcMat[g,],t(as.matrix(rnaMat[mZ$Motif,])),method = "spearman")
                            stopifnot(all.equal(colnames(corr.r),mZ$Motif))
+
                            mZ$Corr <- corr.r[1,] # Correlation coefficient
                            mZ$Corr.Z <- scale(mZ$Corr,center = TRUE,scale = TRUE)[,1] # Z-score among all TF correlations
                            mZ$Corr.P <- 2*pnorm(abs(mZ$Corr.Z),lower.tail = FALSE) # One-tailed
@@ -191,7 +193,8 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
 rankDrivers <- function(figR.d,
                         rankBy=c("meanScore","nTargets"),
                         myLabels=NULL,
-                        score.cut=NULL){
+                        score.cut=NULL,
+                        interactive=FALSE){
 
   if(!rankBy %in% c("meanScore","nTargets"))
     stop("rankBy parameter has to be one of meanScore or nTargets to rank drivers using ..\n")
@@ -206,26 +209,26 @@ rankDrivers <- function(figR.d,
       mutate(Motif=factor(Motif,levels=as.character(Motif)))
 
     # Top and bottom %ile labels
-    figR.summ$Label <- as.character(figR.summ$Motif)
+    figR.summ$TF <- as.character(figR.summ$Motif)
 
     if(is.null(myLabels)){
       # Use quantiles to define what labels are drawn
-      figR.summ$Label[figR.summ$Score >= quantile(figR.summ$Score,0.05) & figR.summ$Score <= quantile(figR.summ$Score,0.95)] <- ""
+      figR.summ$TF[figR.summ$Score >= quantile(figR.summ$Score,0.05) & figR.summ$Score <= quantile(figR.summ$Score,0.95)] <- ""
     } else {
       # Only highlight user-specified
-      figR.summ$Label[!figR.summ$Label %in% myLabels] <- ""
+      figR.summ$TF[!figR.summ$TF %in% myLabels] <- ""
     }
 
     library(ggrepel)
 
-    gAll <- ggplot(figR.summ,aes(x=Motif,y=Score,label=Label)) +
+    gAll <- ggplot(figR.summ,aes(x=Motif,y=Score,label=TF)) +
       geom_bar(size=0.1,stat="identity",fill="darkorange",color=NA) +
       theme_classic() + theme(axis.text.x = element_blank()) +
-      geom_text_repel(size=3,min.segment.length = 0.1,segment.size = 0.2,max.overlaps = 20) +
+      ggrepel::geom_text_repel(size=3,min.segment.length = 0.1,segment.size = 0.2,max.overlaps = 20) +
       geom_hline(yintercept = 0) + labs(x="TF Motifs",y="Regulation Score")
 
   } else {
-    message("Ranking TFs by mean regulation score across all DORCs ..\n")
+    message("Ranking TFs by total number of associated DORCs ..\n")
 
     if(is.null(score.cut)){
       message("Regulation score cut-off not specified ..\n")
@@ -247,39 +250,44 @@ rankDrivers <- function(figR.d,
 
 
     # Top %ile labels
-    figR.summ$Label <- as.character(figR.summ$Motif)
+    figR.summ$TF <- as.character(figR.summ$Motif)
+
+    if(!interactive){
 
     if(is.null(myLabels)){
       # Use ranks to define what labels are drawn
-      figR.summ$Label[figR.summ$Rank > 25] <- ""
+      figR.summ$TF[figR.summ$Rank > 25] <- ""
     } else {
       # Only highlight user-specified
-      figR.summ$Label[!figR.summ$Label %in% myLabels] <- ""
+      figR.summ$TF[!figR.summ$TF %in% myLabels] <- ""
     }
+  }
 
     # Make ggplot
-    gAll <- ggplot(figR.summ,aes(x=Rank,y=numTotal,label=Label)) +
+    gAll <- ggplot(figR.summ,aes(x=Rank,y=numTotal,label=TF,label2=numActivated,label3=numRepressed)) +
       geom_point(size=0.8) +
       scale_y_continuous(limits=c(0,max(figR.summ$numTotal+5))) +
       theme_classic() + theme(axis.text.x = element_blank()) +
-      geom_text_repel(size=3,min.segment.length = 0.1,segment.size = 0.2,max.overlaps = 20) +
+      ggrepel::geom_text_repel(size=3,min.segment.length = 0.1,segment.size = 0.2,max.overlaps = 20) +
       labs(x="Ranked TF Motifs",y=paste0("# Associated genes \nabs(Score) >= ",score.cut))
 
   }
-
+ if(!interactive) {
   gAll
+ } else {
+   plotly::ggplotly(gAll)
+ }
 }
-
 
 
 #' Plot FigR scatter profile
 #'
-#' Scatter plot visualization of TF-DORC associations based on the enrichment of each motif among the queried DORC's peaks and the correlation of the TF RNA to the DORC accessibility score
+#' Scatter plot visualization of filtered TF-DORC associations based on the enrichment of each motif among the queried DORC's peaks and the correlation of the TF RNA to the DORC accessibility score
 #'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
 #'@param marker Matrix object of smoothed single-cell RNA expression values
 #'@param myLabels character vector specifying the subset of DORCs to test, if not running on everything
-#'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified
-#'@return a ggplot2 object of the scatter plot
+#'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
+#'@return a ggplot2 object of the scatter plot of predicted TF drivers for the specified DORC
 #'@import dplyr ggplot2 scales
 #'@export
 #'@author Vinay Kartha
@@ -316,11 +324,11 @@ plotDrivers <- function(figR.d,
 #'
 #' Heatmap visualization of TF-DORC associations based on the regulation scores inferred by FigR
 #'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
-#'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified
+#'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param DORCs character specifying valid DORC gene symbols to subset heatmap to
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to
 #'@param ... additional parameters passed to the \code{\link[ComplexHeatmap]{Heatmap}})
-#'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
+#'@return a TF-DORC filtered Heatmap generatd using \code{\link[ComplexHeatmap]{Heatmap}})
 #'@import dplyr ComplexHeatmap BuenColors scales reshape2 tibble circlize
 #'@export
 #'@author Vinay Kartha
@@ -374,6 +382,19 @@ plotfigRHeatmap <- function(figR.d,
 
 }
 
+#' Plot FigR Network
+#'
+#' Network visualization of TF-DORC associations based on the regulation scores inferred by FigR
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
+#'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
+#'@param DORCs character specifying valid DORC gene symbols to subset heatmap to
+#'@param TFs character specifying valid TF gene symbols to subset heatmap to
+#'@param weight.edge boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
+#'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
+#'@import dplyr networkd3 BuenColors scales reshape2 tibble circlize
+#'@export
+#'@author Vinay Kartha
+
 plotfigRNetwork <- function(figR.d,
                         score.cut=1,
                         DORCs=NULL,
@@ -423,7 +444,7 @@ getColors <- function(tfColor, dorcColor = NULL) {
   colorJS
 }
 
-forceNetwork(Links = links,
+networkd3::forceNetwork(Links = links,
              Nodes = nodes,
              Source = "target",
              Target = "source",

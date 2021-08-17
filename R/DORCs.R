@@ -422,7 +422,7 @@ getDORCScores <- function(ATAC.se,
 #'@param cleanLabels boolean indicating whether or not to try to have cleaner DORC gene labels. If TRUE, uses \code{\link[ggrepel]{geom_text_repel}}, if FALSE, will use regular \code{\link[ggplot2]{geom_text}}
 #'@param labelSize numeric indicating what to set label size to. Default is 4.
 #'@param ... additional parameters passed to either \code{\link[ggrepel]{geom_text_repel}} (if cleanLabels is set to TRUE) or \code{\link[ggplot2]{geom_text}}. For example, set size to control font size, or segment.length or segment.color to control call-out segment length and color etc.
-#'@return a ggplot object of the DORC J plot
+#'@return a ggplot object of the DORC J plot. If returnGeneList is set to TRUE, then also returns the vector of DORC genes passing the specified threshold
 #'@import dplyr ggplot2 ggrepel scales
 #'@export
 #'@author Vinay Kartha
