@@ -8,10 +8,10 @@
 #'
 #'Function to run TF motif-to-gene associations using reference DORC peak-gene mappings
 #'@param ATAC.se SummarizedExperiment object of peak x cell scATAC-seq data, the same as used to compute DORCs using \code{\link[FigR]{runGenePeakcorr}}
-#'@param dorcK numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30, i.e. set to ~3 % of total DORCs determined
-#'@param dorcTab data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE (peak set) was used when determinin DORCs that is used here to get corresponding DORC peak counts
+#'@param dorcK numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30, i.e. set to ~3 percent of total DORCs determined
+#'@param dorcTab data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE peak set was used when determining DORCs that is used here to get corresponding DORC peak counts
 #'@param n_bg number of background peaks to use for
-#'@param genome character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]} for hg19
+#'@param genome character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]{BSgenome.Hsapiens.UCSC.hg19}} for hg19
 #'@param dorcMat Matrix object of smoothed single-cell DORC accessibility scores
 #'@param rnaMat Matrix object of smoothed single-cell RNA expression values
 #'@param dorcGenes character vector specifying the subset of DORCs to test, if not running on everything
@@ -20,6 +20,7 @@
 #'@import dplyr Matrix SummarizedExperiment chromVAR
 #'@export
 #'@author Vinay Kartha
+#'
 runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg peaks etc.
                     dorcK=30, # How many dorc kNNs are we using to pool peaks
                     dorcTab, # peak x DORC connections (should contain indices relative to peaks in ATAC.se)
