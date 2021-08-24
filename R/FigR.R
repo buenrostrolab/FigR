@@ -187,7 +187,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
 #'@param myLabels character vector specifying the subset of DORCs to test, if not running on everything
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified
 #'@return a ggplot2 object of the resulting plot
-#'@import dplyr ggplot2 ggrepel
+#'@import dplyr ggplot2 ggrepel plotly
 #'@export
 #'@author Vinay Kartha
 rankDrivers <- function(figR.d,
@@ -325,8 +325,8 @@ plotDrivers <- function(figR.d,
 #' Heatmap visualization of TF-DORC associations based on the regulation scores inferred by FigR
 #'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
-#'@param DORCs character specifying valid DORC gene symbols to subset heatmap to
-#'@param TFs character specifying valid TF gene symbols to subset heatmap to
+#'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
+#'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param ... additional parameters passed to the \code{\link[ComplexHeatmap]{Heatmap}})
 #'@return a TF-DORC filtered Heatmap generatd using \code{\link[ComplexHeatmap]{Heatmap}})
 #'@import dplyr ComplexHeatmap BuenColors scales reshape2 tibble circlize
@@ -387,14 +387,13 @@ plotfigRHeatmap <- function(figR.d,
 #' Network visualization of TF-DORC associations based on the regulation scores inferred by FigR
 #'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
-#'@param DORCs character specifying valid DORC gene symbols to subset heatmap to
-#'@param TFs character specifying valid TF gene symbols to subset heatmap to
+#'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
+#'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param weight.edge boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
 #'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
 #'@import dplyr networkd3 BuenColors scales reshape2 tibble circlize
 #'@export
 #'@author Vinay Kartha
-
 plotfigRNetwork <- function(figR.d,
                         score.cut=1,
                         DORCs=NULL,
