@@ -17,15 +17,15 @@ runFigR(
 )
 }
 \arguments{
-\item{ATAC.se}{SummarizedExperiment object of peak x cell scATAC-seq data (same as used to compute DORCs using \code{\link[FigR]{runGenePeakcorr}}).}
+\item{ATAC.se}{SummarizedExperiment object of peak x cell scATAC-seq data, the same as used to compute DORCs using \code{\link[FigR]{runGenePeakcorr}}}
 
-\item{dorcK}{numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30 (set to ~3 % of total DORCs determined).}
+\item{dorcK}{numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30, i.e. set to ~3 % of total DORCs determined}
 
 \item{dorcTab}{data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE (peak set) was used when determinin DORCs that is used here to get corresponding DORC peak counts}
 
 \item{n_bg}{number of background peaks to use for}
 
-\item{genome}{character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package (e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]} for hg19)}
+\item{genome}{character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]} for hg19}
 
 \item{dorcMat}{Matrix object of smoothed single-cell DORC accessibility scores}
 
@@ -33,7 +33,7 @@ runFigR(
 
 \item{dorcGenes}{character vector specifying the subset of DORCs to test, if not running on everything}
 
-\item{nCores}{numeric specifying the number of cores to run DORCs in parallel. Default is 1 (don't use parallel backend)}
+\item{nCores}{numeric specifying the number of cores to run DORCs in parallel. Default is 1, i.e. don't use parallel backend}
 }
 \value{
 a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association

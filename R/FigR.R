@@ -7,15 +7,15 @@
 #' Run FigR TF-DORC associations
 #'
 #'Function to run TF motif-to-gene associations using reference DORC peak-gene mappings
-#'@param ATAC.se SummarizedExperiment object of peak x cell scATAC-seq data (same as used to compute DORCs using \code{\link[FigR]{runGenePeakcorr}}).
-#'@param dorcK numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30 (set to ~3 % of total DORCs determined).
+#'@param ATAC.se SummarizedExperiment object of peak x cell scATAC-seq data, the same as used to compute DORCs using \code{\link[FigR]{runGenePeakcorr}}
+#'@param dorcK numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30, i.e. set to ~3 % of total DORCs determined
 #'@param dorcTab data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE (peak set) was used when determinin DORCs that is used here to get corresponding DORC peak counts
 #'@param n_bg number of background peaks to use for
-#'@param genome character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package (e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]} for hg19)
+#'@param genome character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]} for hg19
 #'@param dorcMat Matrix object of smoothed single-cell DORC accessibility scores
 #'@param rnaMat Matrix object of smoothed single-cell RNA expression values
 #'@param dorcGenes character vector specifying the subset of DORCs to test, if not running on everything
-#'@param nCores numeric specifying the number of cores to run DORCs in parallel. Default is 1 (don't use parallel backend)
+#'@param nCores numeric specifying the number of cores to run DORCs in parallel. Default is 1, i.e. don't use parallel backend
 #'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
 #'@import dplyr Matrix SummarizedExperiment chromVAR
 #'@export
@@ -23,7 +23,7 @@
 runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg peaks etc.
                     dorcK=30, # How many dorc kNNs are we using to pool peaks
                     dorcTab, # peak x DORC connections (should contain indices relative to peaks in ATAC.se)
-                    n_bg=50, # No. of background peaks to use for motif Z test
+                    n_bg=50, # No. of background peaks to use for motif enrichment Z test
                     genome, # One of mm10, hg19, hg38, with no default
                     dorcMat, # Expect smoothed
                     rnaMat, # Expect smoothed
