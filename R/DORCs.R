@@ -51,7 +51,7 @@ PeakGeneCor <- function(ATAC, # Normalized reads in peaks counts (rownames shoul
   ends <- starts + chunkSize -1
   ends[length(ends)] <- n
 
-  OVd <- OV %>% as.data.frame() %>% rename("Gene"="queryHits","Peak"="subjectHits")
+  OVd <- OV %>% as.data.frame() %>% dplyr::rename("Gene"="queryHits","Peak"="subjectHits")
 
   chunkList <- mapply(c, starts, ends, SIMPLIFY = FALSE)
 
@@ -62,7 +62,7 @@ PeakGeneCor <- function(ATAC, # Normalized reads in peaks counts (rownames shoul
   cat("Computing observed correlations ..\n")
 
   corList <- pbmcapply::pbmclapply(X=chunkList,
-                                   FUN=function(x) {chunkCore(chunk=x,A=ATAC,R=RNA,O=OVd,met=metric)},mc.cores = ncores)
+                                   FUN=function(x) {FigR::chunkCore(chunk=x,A=ATAC,R=RNA,O=OVd,met=metric)},mc.cores = ncores)
 
 
   if(any(unlist(sapply(corList,is.null)))){
@@ -86,7 +86,7 @@ PeakGeneCor <- function(ATAC, # Normalized reads in peaks counts (rownames shoul
     time_elapsed <- Sys.time()
 
     bgCor <- foreach(i=1:n_iter,.combine = 'cbind',
-                     .export = c("chunkCore","t"),.packages = c("pbmcapply","Matrix")) %do% {
+                     .export = c("chunkCore","t"),.packages = c("pbmcapply","FigR","Matrix")) %do% {
                        OVdBg <- OVd[,1:2] # Initialize gene-peak pairing to observed
                        OVdBg$Peak <- bg[OVdBg$Peak,i] # Swap actual peaks with bg peaks for given iteration in pairing
                        bgCorList <- pbmcapply::pbmclapply(X=chunkList,
@@ -116,8 +116,9 @@ PeakGeneCor <- function(ATAC, # Normalized reads in peaks counts (rownames shoul
 #'@param RNAmat Matrix object of the normalized scRNA-seq counts. For example, this will be the normalized count data housed within the `@assays$RNA@data` field if processed using Seurat. Must have same number of cells (i.e. matched) with the scATAC-seq data
 #'@param genome character specifying the reference genome build to use. Must be one of "hg19", "hg38" or "mm10", with no default
 #'@param TSSwindow numeric specifying the window size (in base pairs) to pad around either side of each TSS, to fetch overlapping peaks. Default is 50 kb (so 100 kb window is drawn arund each TSS)
-#'@param normalizeATACmat boolean indicating whether or not to normalize the counts present in the ATAC.se object prior to computing correlations. Default is TRUE (i.e. assumes peak counts in ATAC.se are raw).
+#'@param normalizeATACmat boolean indicating whether or not to normalize the counts present in the ATAC.se object prior to computing correlations. Default is TRUE (i.e. assumes peak counts in ATAC.se are raw)
 #'@param nCores numeric indicating the number of cores to use if parallelizing tasks
+#'@param keepPosCorOnly boolean indicating whether to only filter for positively correlated gene-peak associations (and hence assumes performing a right-tailed Z-test with permuted correlations). Default is TRUE (only keep positively correlated associations)
 #'@param keepMultiMappingPeaks boolean indicating whether or not to keep peaks mapping to more than 1 gene. Default is FALSE (i.e. force 1-1 mapping for peak-gene, keeping peak with higher correlation if mapping to more than one gene)
 #'@param n_bg numeric indicating the number of background correlations to compute per gene-peak pair. Default is 100 (increasing this can significantly increase run time)
 #'@param p.cut numeric indicating p-value cut-off to apply to gene-peak correlations. Default is NULL (i.e. don't apply any filtering of results). Good option is to set to 0.05
@@ -132,6 +133,7 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
                             windowPadSize=50000, # base pairs padded on either side of gene TSS
                             normalizeATACmat=TRUE, # Whether or not to normalize scATAC counts (default is yes, assumes raw counts)
                             nCores=4, # Number of cores if parallelization support
+                            keepPosCorOnly=TRUE,
                             keepMultiMappingPeaks=FALSE,
                             n_bg=100, # Number of background peaks to use
                             p.cut=NULL # Optional, if specified, will only return sig peak-gene hits
@@ -186,11 +188,11 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
   if (!genome %in% c("hg19", "hg38", "mm10"))
     stop("You must specify one of hg19, hg38 or mm10 as a genome build for currently supported TSS annotations..\n")
   switch(genome, hg19 = {
-    TSSg <- hg19TSSRanges
+    TSSg <- FigR::hg19TSSRanges
   }, hg38 = {
-    TSSg <- hg38TSSRanges
+    TSSg <- FigR::hg38TSSRanges
   }, mm10 = {
-    TSSg <- mm10TSSRanges
+    TSSg <- FigR::mm10TSSRanges
   })
 
   # Keep genes that have annotation and are in RNA matrix
@@ -279,12 +281,12 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
   for(i in 1:length(chunkStarts)){
     cat("Running pairs: ",chunkStarts[i], "to",chunkEnds[i],"\n")
     # This fill further chunk this up and run in parallel, saving the merged output ObsCor
-    ObsCor <- PeakGeneCor(ATAC = ATACmat,
-                          RNA = RNAmat,
-                          OV = genePeakOv[chunkStarts[i]:chunkEnds[i]],
-                          chunkSize = pairsPerChunk,
-                          ncores = nCores,
-                          bg = bg)
+    ObsCor <- FigR::PeakGeneCor(ATAC = ATACmat,
+                                RNA = RNAmat,
+                                OV = genePeakOv[chunkStarts[i]:chunkEnds[i]],
+                                chunkSize = pairsPerChunk,
+                                ncores = nCores,
+                                bg = bg)
     gc()
 
     dorcList[[i]] <- ObsCor
@@ -297,41 +299,43 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
   permCols <- 4:(ncol(bg)+3)
 
 
-  # Filter to positive correlations
-  cat("Only considering positive correlations ..\n")
-  dorcTabFilt <- dorcTab %>% filter(rObs > 0)
+  if (keepPosCorOnly){
+    # Filter to positive correlations
+    cat("Only considering positive correlations ..\n")
+    dorcTab <- dorcTab %>% filter(rObs > 0)
+  }
 
   if(!keepMultiMappingPeaks){
   # Remove multi-mapping peaks (force 1-1 mapping)
   cat("Keeping max correlation for multi-mapping peaks ..\n")
-  dorcTabFilt <- dorcTabFilt %>% group_by(Peak) %>% filter(rObs==max(rObs))
-   }
+  dorcTab <- dorcTab %>% group_by(Peak) %>% filter(rObs==max(rObs))
+  }
 
   # Swap gene number for gene symbol from TSS annotation lookup
-  dorcTabFilt$Gene <- as.character(TSSg$gene_name)[dorcTabFilt$Gene]
+  dorcTab$Gene <- as.character(TSSg$gene_name)[dorcTab$Gene]
 
   # Swap peak numbers to match reference input peak numbers
   # This only changes if some peaks had zero accessibility and were filtered out internally
   # Use rownames from reference matching
-  dorcTabFilt$Peak <- as.numeric(splitAndFetch(rownames(ATACmat)[dorcTabFilt$Peak],"Peak",2))
+  dorcTab$Peak <- as.numeric(splitAndFetch(rownames(ATACmat)[dorcTab$Peak],"Peak",2))
 
   # # Z test pval
-  dorcTabFilt$rBgSD <- matrixStats::rowSds(as.matrix(dorcTabFilt[,permCols]))
-  dorcTabFilt$rBgMean <- rowMeans(dorcTabFilt[,permCols])
-  dorcTabFilt$pvalZ <- 1-stats::pnorm(q = dorcTabFilt$rObs,mean = dorcTabFilt$rBgMean,sd = dorcTabFilt$rBgSD)
+  dorcTab$rBgSD <- matrixStats::rowSds(as.matrix(dorcTab[,permCols]))
+  dorcTab$rBgMean <- rowMeans(dorcTab[,permCols])
+  dorcTab$pvalZ <- 1-stats::pnorm(q = dorcTab$rObs,mean = dorcTab$rBgMean,sd = dorcTab$rBgSD)
 
 
   cat("\nFinished!\n")
 
   if(!is.null(p.cut)){
     cat("Using significance cut-off of ",p.cut," to subset to resulting associations\n")
-    dorcTabFilt <- dorcTabFilt[dorcTabFilt$pvalZ <= p.cut,] # Subset to significant correlations only
+    dorcTab <- dorcTab[dorcTab$pvalZ <= p.cut,] # Subset to significant correlations only
   }
 
   # Add peak ranges to final data frame output
-  dorcTabFilt$PeakRanges <- paste(as.character(seqnames(peakRanges.OG[dorcTabFilt$Peak])),paste(start(peakRanges.OG[dorcTabFilt$Peak]),end(peakRanges.OG[dorcTabFilt$Peak]),sep="-"),sep=":")
+  dorcTab$PeakRanges <- paste(as.character(seqnames(peakRanges.OG[dorcTab$Peak])),paste(start(peakRanges.OG[dorcTab$Peak]),end(peakRanges.OG[dorcTab$Peak]),sep="-"),sep=":")
 
-  return(as.data.frame(dorcTabFilt[,c("Peak","PeakRanges","Gene","rObs","pvalZ")],stringsAsFactors=FALSE))
+  return(as.data.frame(dorcTab[,c("Peak","PeakRanges","Gene","rObs","pvalZ")],stringsAsFactors=FALSE))
 }
 
 #' DORC scATAC-seq score summarization for single cells
