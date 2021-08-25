@@ -12,6 +12,7 @@ runGenePeakcorr(
   windowPadSize = 50000,
   normalizeATACmat = TRUE,
   nCores = 4,
+  keepPosCorOnly = TRUE,
   keepMultiMappingPeaks = FALSE,
   n_bg = 100,
   p.cut = NULL
@@ -24,9 +25,11 @@ runGenePeakcorr(
 
 \item{genome}{character specifying the reference genome build to use. Must be one of "hg19", "hg38" or "mm10", with no default}
 
-\item{normalizeATACmat}{boolean indicating whether or not to normalize the counts present in the ATAC.se object prior to computing correlations. Default is TRUE (i.e. assumes peak counts in ATAC.se are raw).}
+\item{normalizeATACmat}{boolean indicating whether or not to normalize the counts present in the ATAC.se object prior to computing correlations. Default is TRUE (i.e. assumes peak counts in ATAC.se are raw)}
 
 \item{nCores}{numeric indicating the number of cores to use if parallelizing tasks}
+
+\item{keepPosCorOnly}{boolean indicating whether to only filter for positively correlated gene-peak associations (and hence assumes performing a right-tailed Z-test with permuted correlations). Default is TRUE (only keep positively correlated associations)}
 
 \item{keepMultiMappingPeaks}{boolean indicating whether or not to keep peaks mapping to more than 1 gene. Default is FALSE (i.e. force 1-1 mapping for peak-gene, keeping peak with higher correlation if mapping to more than one gene)}
 

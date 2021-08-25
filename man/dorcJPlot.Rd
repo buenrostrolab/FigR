@@ -15,7 +15,7 @@ dorcJPlot(
 )
 }
 \arguments{
-\item{dorcTab}{data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[BuenRTools]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE (peak set) was used when determinin DORCs that is used here to get corresponding DORC peak counts}
+\item{dorcTab}{data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE (peak set) was used when determining DORCs that is used here to get corresponding DORC peak counts}
 
 \item{cutoff}{numeric indicating cut-off to use for number of significant peaks per gene to call it a DORC. Default is 7 significant peaks per gene.}
 
