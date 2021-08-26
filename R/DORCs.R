@@ -265,10 +265,10 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
 
   cat("Computing gene-peak correlations ..\n")
 
-  pairsPerChunk <- 200
+  pairsPerChunk <- 500
 
   # This defines the outer (larger chunks)
-  largeChunkSize <- 1000
+  largeChunkSize <- 5000
 
   startingPoint <- 1 # If for any reason the workers fail, resume from where it failed by specifying the starting point here
   chunkStarts <- seq(startingPoint, numPairs, largeChunkSize)
