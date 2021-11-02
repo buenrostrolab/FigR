@@ -81,6 +81,9 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
     ATAC.se <- chromVAR::addGCBias(ATAC.se, genome = myGenome)
   }
 
+  # Set data subfolder path
+  packagePath <- find.package("FigR", lib.loc=NULL, quiet = TRUE)
+
   if(grepl("hg",genome)){
     pwm <- readRDS(paste0(packagePath,"/data/cisBP_human_pfms_2021.rds"))
   } else {

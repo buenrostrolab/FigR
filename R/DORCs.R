@@ -361,12 +361,18 @@ getDORCScores <- function(ATAC.se,
     stop("The provided gene-peak table must have columns named Peak and Gene ..")
 
   if(any(dorcTab$Peak > nrow(ATAC.se)))
-    stop("One or more peak indices in the gene-peak table are larger than the total number of peaks in the provided ATAC SE object ..\n Make sure")
+    stop("One or more peak indices in the gene-peak table are larger than the total number of peaks in the provided ATAC SE object ..\n Make sure the exact same SummarizedExperiment object is provided here as was for running the runGenePeakcorr function ..\n")
+
   if(!is.null(geneList)){
     if(!(all(geneList %in% as.character(dorcTab$Gene))))
       stop("One or more of the gene names supplied is not present in the gene-peak table provided..\n")
 
-    cat("Running DORC scoring for genes:",geneList,sep = "\n")
+    if(length(geneList) > 50){
+	    message("Running DORC scoring for ",length(geneList)," genes: ",paste(geneList[1:20],collapse=", "),", ... , ... , ... (truncated display)")
+    } else {
+      message("Running DORC scoring for ",length(geneList)," genes: ",paste(geneList,collapse = "\n"))
+    }
+
     cat("........\n")
 
     dorcTab <- dorcTab[dorcTab$Gene %in% geneList,] # Filter only to these genes
