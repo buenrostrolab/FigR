@@ -177,7 +177,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
   # Here, we only sign by corr
   # Since sometimes we lose digit precision (1 - v small number is 1, instead of 0.9999999..)
   # Use Rmpfr, increase precision limits above default (100 here)
-  TFenrich.d <- TFenrich.d %>% mutate("Score"=sign(Corr)*as.numeric(-log10(1-(1-Rmpfr::mpfr(Enrichment.P,100))*(1-Rmpfr::mpfr(Corr.P,100)))))
+  TFenrich.d <- TFenrich.d %>% dplyr::mutate("Score"=sign(Corr)*as.numeric(-log10(1-(1-Rmpfr::mpfr(Enrichment.P,100))*(1-Rmpfr::mpfr(Corr.P,100)))))
   TFenrich.d$Score[TFenrich.d$Enrichment.Z < 0] <- 0
   TFenrich.d
 }
