@@ -257,7 +257,7 @@ motifPeakZtest <- function(peakSet,
     return(d)
   }))
   # sort by enrichment pval, motif observed frequency
-  m.p <- dplyr::arrange(m.p,pval.z, motif_obs_freq)
+  #m.p <- dplyr::arrange(m.p,pval.z, motif_obs_freq)
   # return df of enrichment scores
   return(m.p)
 }
