@@ -288,9 +288,9 @@ rankDrivers <- function(figR.d,
 #'
 #' Scatter plot visualization of filtered TF-DORC associations based on the enrichment of each motif among the queried DORC's peaks and the correlation of the TF RNA to the DORC accessibility score
 #'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
-#'@param marker Matrix object of smoothed single-cell RNA expression values
-#'@param myLabels character vector specifying the subset of DORCs to test, if not running on everything
+#'@param marker character specifying a valid DORC gene to restrict TF drivers for
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
+#'@param label boolean indicating whether or not to add text labels for TF drivers passing score filter
 #'@return a ggplot2 object of the scatter plot of predicted TF drivers for the specified DORC
 #'@import dplyr ggplot2 scales
 #'@export
@@ -304,12 +304,17 @@ plotDrivers <- function(figR.d,
     stop("Marker specified is not a valid DORC symbol found in the data.frame")
 
   d <- figR.d %>% filter(DORC %in% marker) %>% mutate(isSig=ifelse(abs(Score) >= score.cut,"Yes","No"))
+  if(label){
   d$Label <- d$Motif
   d$Label[d$isSig %in% "No"] <- ""
+  } else {
+    d$Label <- ""
+  }
+
   gScatter <- d %>%  ggplot(aes(x=Corr.log10P,y=Enrichment.log10P,color=isSig,label=Label)) +
     geom_hline(yintercept = 0,color="gray60",linetype="dashed") +
     geom_vline(xintercept = 0,color="gray60",linetype="dashed") +
-    geom_point(size=0.8,shape=16) + theme_classic() +
+    geom_point(size=0.8) + theme_classic() +
     scale_color_manual(values=c("gray66","firebrick3"))+
     scale_x_continuous(breaks=scales::pretty_breaks()) +
     scale_y_continuous(breaks=scales::pretty_breaks()) +
@@ -395,7 +400,7 @@ plotfigRHeatmap <- function(figR.d,
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param weight.edge boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
 #'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
-#'@import dplyr networkd3 BuenColors scales reshape2 tibble circlize
+#'@import dplyr networkD3 BuenColors scales reshape2 tibble circlize
 #'@export
 #'@author Vinay Kartha
 plotfigRNetwork <- function(figR.d,

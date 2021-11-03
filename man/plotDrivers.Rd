@@ -9,11 +9,11 @@ plotDrivers(figR.d, marker, score.cut = 1, label = TRUE)
 \arguments{
 \item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}}).}
 
-\item{marker}{Matrix object of smoothed single-cell RNA expression values}
+\item{marker}{character specifying a valid DORC gene to restrict TF drivers for}
 
 \item{score.cut}{numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1}
 
-\item{myLabels}{character vector specifying the subset of DORCs to test, if not running on everything}
+\item{label}{boolean indicating whether or not to add text labels for TF drivers passing score filter}
 }
 \value{
 a ggplot2 object of the scatter plot of predicted TF drivers for the specified DORC
