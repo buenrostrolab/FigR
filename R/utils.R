@@ -207,7 +207,7 @@ motifPeakZtest <- function(peakSet,
 
 
   # Filter out TFs whose motifs that overlap no peaks (if they exist)
-  tfMat <- tfMat[,!Matrix::colSums(tfMat)!=0]
+  tfMat <- tfMat[,Matrix::colSums(tfMat)!=0]
 
   # get selected peak motif frequencies
   cat("Getting selected peak motif frequencies ..\n")
@@ -256,8 +256,11 @@ motifPeakZtest <- function(peakSet,
     )
     return(d)
   }))
+
   # sort by enrichment pval, motif observed frequency
+  # Note: this returned an error saying pval.z not found in the arrange, look into it
   #m.p <- dplyr::arrange(m.p,pval.z, motif_obs_freq)
+
   # return df of enrichment scores
   return(m.p)
 }
@@ -274,7 +277,7 @@ extractTFNames <- function(motifIDs){
   if(all(grepl("_",motifIDs,fixed = TRUE))){
     sapply(strsplit(sapply(strsplit(motifIDs,"_LINE.",fixed=FALSE),"[[",2),"_",fixed=FALSE),"[[",2)
   } else {
-    message("One or more provided motif IDs do not contain any '_' characters .. returning IDs as is")
+    #message("One or more provided motif IDs do not contain any '_' characters .. returning IDs as is")
     motifIDs
   }
 }
