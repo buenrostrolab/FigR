@@ -13,7 +13,7 @@ plotfigRNetwork(
 )
 }
 \arguments{
-\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}}).}
+\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}})}
 
 \item{score.cut}{numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1}
 
@@ -24,7 +24,7 @@ plotfigRNetwork(
 \item{weight.edge}{boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE}
 }
 \value{
-a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
+a network plot of the resulting filtered TF-DORC associations
 }
 \description{
 Network visualization of TF-DORC associations based on the regulation scores inferred by FigR

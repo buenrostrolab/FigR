@@ -394,12 +394,12 @@ plotfigRHeatmap <- function(figR.d,
 #' Plot FigR Network
 #'
 #' Network visualization of TF-DORC associations based on the regulation scores inferred by FigR
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param weight.edge boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
-#'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
+#'@return a network plot of the resulting filtered TF-DORC associations
 #'@import dplyr networkD3 BuenColors scales reshape2 tibble circlize
 #'@export
 #'@author Vinay Kartha
@@ -452,7 +452,7 @@ getColors <- function(tfColor, dorcColor = NULL) {
   colorJS
 }
 
-networkd3::forceNetwork(Links = links,
+networkD3::forceNetwork(Links = links,
              Nodes = nodes,
              Source = "target",
              Target = "source",
