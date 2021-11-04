@@ -81,6 +81,10 @@ fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) %>%
 
 We are actively developing this package and will include more detailed vignettes soon!
 
+Check out our walk throughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
+
+
+
 # Reference
 
 See our [recent preprint](https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1) detailing  the use of the FigR framework for gene regulatory network inference using scATAC and scRNA-seq integration
