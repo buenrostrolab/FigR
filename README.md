@@ -83,6 +83,9 @@ We are actively developing this package and will include more detailed vignettes
 
 Check out our walk throughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
 
+<p align="left">
+<img src="images/skin.PNG" href="vignettes/FigR_shareseq_tutorial.html" height="50%" width="40%">
+</p>
 
 
 # Reference
