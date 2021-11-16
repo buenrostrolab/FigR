@@ -272,7 +272,7 @@ cell_pairing <- function(ATACpcs, # Input ATAC single cell PCs obtained from Run
                          # for details on this tol parameter, see the documentation of optmatch. Look for function fullmatch
                          # If mode is specified to be "geodesic", then we need to provide the below parameters.
                          search_range = 0.2, # This determines the size of the search knn. search_range * total number of cells = size of knn.
-                         max_multimatch = 5, # Maximum number of cells allowed to be matched to each cell.
+                         max_multimatch = 5, # Maximum number of cells in the ATAC that is allowed to be matched to each cell in the RNA.
                          umap_knn_k = 30, # Number of geodesic ATACxRNA neighbors to consider in coembedding graph
                          min_subgraph_size=50, # Minimum number of cells (ATAC/RNA each) needed for pairing in a given subgraph. Will skip subgraphs with fewer than these cells
                          cca_umap_df = NULL, # Optional umap of all (ATAC + RNA cells) to visualize UMAP of cells from each chunk being paired, colored by subgraph
@@ -526,7 +526,7 @@ chunk_CCA <- function(CCA_1,
 #' Wrapper function for running ATAC/RNA pairing in cell chunks using co-embedding components
 #'@param ATAC
 #'@param RNA
-#'@param keepUnique boolean indicating whether or not to remove any resulting many-to-many ATAC-RNA paired cells returned by the geodesic pairing method (depending on what the `max_multimatch` parameter is set to in {FigR}[cell_pairing], which defaults to 5). Default is FALSE, meaning in the returned pairing, there can a single cell in the larger dataset paired to upto `max_multimatch` cells in the smaller dataset. See {FigR}[cell_pairing] for more details. If set to TRUE, we further filter pairs and return for each cell in the larger dataset the best match in the smaller dataset (among the multiple options, if any) based on the min euclidean distances between pair options (in the suoplied reduced dimension space). Useful for RNA to ATAC cell cluster label transfer (since each ATAC cell can only acquire a single cluster identity based on the best RNA cell match), but not required for downstream analyses (peak-gene correlations and TF-DORC associations)
+#'@param keepUnique boolean indicating whether or not to remove any resulting many-to-many ATAC-RNA paired cells returned by the geodesic pairing method (depending on what the `max_multimatch` parameter is set to in {FigR}[cell_pairing], which defaults to 5). Default is FALSE, meaning in the returned pairing, there can a single cell in the larger dataset paired to upto `max_multimatch` cells in the smaller dataset. See {FigR}[cell_pairing] for more details. If set to TRUE, we further filter pairs and return for each cell in the larger dataset the best match in the smaller dataset (among the multiple options, if any) based on the min euclidean distances between pair options (in the supplied reduced dimension space). Useful for RNA to ATAC cell cluster label transfer (since each ATAC cell can only acquire a single cluster identity based on the best RNA cell match), but not required for downstream analyses (peak-gene correlations and TF-DORC associations)
 #'@param ... additional parameters passed to \code{\link[FigR]{cell_pairing}}. Useful parameters for enabling a search solution include `search_range` and `min_subgraph_size`, which dictates how cells are potentially excluded from being paired
 #'@return
 #'@import
@@ -572,7 +572,7 @@ pairCells <- function(ATAC,
 
 
   if(keepUnique){
-  message("\n\n Further filtering out pairs based on the min. euclidean distance ..\n")
+  message("\n\nFurther filtering out ATAC-RNA cell pairs based on the mininum euclidean distance ..\n")
   message("Barcodes in the larger dataset will now be unique ..\n")
 
   # Add euc distance for resulting pairs (allows further filtering if needed)
