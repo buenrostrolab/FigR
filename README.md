@@ -89,7 +89,7 @@ Check out our walk throughs on applying the FigR framework to multi-modal and in
 </p>
 
 <p align="center">
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_shareseq_tutorial.html?token=ACJLS4UPFDZVXWXHJIYGXGLBTRSPO"><img src="images/skinv2.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_shareseq_tutorial.html?token=ACJLS4UPFDZVXWXHJIYGXGLBTRSPO"><img src="images/PBMCs.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
 </p>
 
 # Reference
