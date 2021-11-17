@@ -34,8 +34,10 @@ plotPairs <- function(ATAC,
 
   stopifnot(!is.null(rownames(umap.df)))
   stopifnot(all.unique(rownames(umap.df)))
+
   if(!all(ATAC %in% rownames(umap.df)))
     stop("One or more ATAC barcodes specified from the pairing is not in the provided UMAP data.frame rownames ..")
+
   if(!all(RNA %in% rownames(umap.df)))
     stop("One or more RNA barcodes specified from the pairing is not in the provided UMAP data.frame rownames ..")
 
