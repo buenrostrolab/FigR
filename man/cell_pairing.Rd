@@ -24,7 +24,7 @@ cell_pairing(
 
 \item{mode}{character specifying the pairing mode. Must be one of 'geodesic' (default) or 'greedy'.}
 
-\item{tol}{See {optmatch}[fullmatch] for more information on this parameter}
+\item{tol}{See \code{\link[optmatch]{fullmatch}} for more information on this parameter}
 
 \item{search_range}{This determines the size of the search knn window for allowed pairing. search_range * total number of cells = size of knn. Default is 0.2. Increasing this can take more time since we have to evaluate over more possible pairs}
 
@@ -38,9 +38,12 @@ cell_pairing(
 
 \item{seed}{numeric specifying seed to use for subgraph UMAP and for down-sampling in case subgraphs are imbalanced}
 }
+\value{
+a data.frame object containing ATAC and RNA cell barcodes from the resulting pairing
+}
 \description{
 Perform geodesic pairing using ATAC/RNA co-embedding components
 }
 \author{
-Vinay Kartha, Yan Hu
+Yan Hu, Vinay Kartha
 }

@@ -186,10 +186,11 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
 #' Rank TF drivers
 #'
 #' Ranked plot of TF activators and repressors based on their inferred regulation score
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
-#'@param rankBy character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred targets passing a specified (absolute) regulation score, respectively
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
+#'@param rankBy character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred activated or repressed targets passing a specified (absolute) regulation score, respectively
 #'@param myLabels character vector specifying the subset of DORCs to test, if not running on everything
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified
+#'@param interactive boolean indicating whether or not to allow interactive hover-over utility for more label information (useful if visualizing too many TFs and labels are hard to distinguish). Default is FALSE
 #'@return a ggplot2 object of the resulting plot
 #'@import dplyr ggplot2 ggrepel plotly
 #'@export
@@ -227,7 +228,7 @@ rankDrivers <- function(figR.d,
 
     gAll <- ggplot(figR.summ,aes(x=Motif,y=Score,label=TF)) +
       geom_bar(size=0.1,stat="identity",fill="darkorange",color=NA) +
-      theme_classic() + theme(axis.text.x = element_blank()) +
+      theme_classic() + theme(axis.text.x = element_blank(),axis.text=element_text(color="black")) +
       ggrepel::geom_text_repel(size=3,min.segment.length = 0.1,segment.size = 0.2,max.overlaps = 20) +
       geom_hline(yintercept = 0) + labs(x="TF Motifs",y="Regulation Score")
 
@@ -242,52 +243,42 @@ rankDrivers <- function(figR.d,
     message("Using absolute score cut-off of: ",score.cut," ..\n")
 
     # Prep summary stats
-    figR.summ <- figR.d %>%
-      filter(abs(Score) >= score.cut) %>%
-      group_by(Motif) %>%
-      dplyr::select(-DORC) %>%
-      dplyr::summarize(numActivated=sum(Score > 0),numRepressed=sum(Score < 0)) %>%
-      dplyr::mutate(numTotal=numActivated+numRepressed) %>%
-      dplyr::arrange(desc(numTotal)) %>%
-      dplyr::mutate(Motif=factor(Motif,levels=as.character(Motif))) %>%
-      tibble::rowid_to_column("Rank")
+    figR.summ  <- figR.d %>% filter(abs(Score) >= score.cut) %>%
+      group_by(Motif) %>% dplyr::select(-DORC) %>%
+      dplyr::summarize(numActivated = sum(Score > 0), numRepressed = sum(Score < 0)) %>%
+      dplyr::mutate(diff = numActivated -numRepressed) %>% # log2FC works too
+      mutate(numActivatedY=ifelse(diff > 0,numActivated,-numActivated),numRepressedY=ifelse(diff > 0,numRepressed,-numRepressed)) %>%
+      dplyr::arrange(desc(diff)) %>%
+      mutate(Motif=factor(Motif,levels=as.character(Motif))) %>%
+      select(-diff) %>% reshape2::melt(id.vars=c("Motif","numActivated","numRepressed"))
 
-
-    # Top %ile labels
-    figR.summ$TF <- as.character(figR.summ$Motif)
-
-    if(!interactive){
-
-    if(is.null(myLabels)){
-      # Use ranks to define what labels are drawn
-      figR.summ$TF[figR.summ$Rank > 25] <- ""
-    } else {
-      # Only highlight user-specified
-      figR.summ$TF[!figR.summ$TF %in% myLabels] <- ""
-    }
-  }
-
+    # New
     # Make ggplot
-    gAll <- ggplot(figR.summ,aes(x=Rank,y=numTotal,label=TF,label2=numActivated,label3=numRepressed)) +
-      geom_point(size=0.8) +
-      scale_y_continuous(limits=c(0,max(figR.summ$numTotal+5))) +
-      theme_classic() + theme(axis.text.x = element_blank()) +
-      ggrepel::geom_text_repel(size=3,min.segment.length = 0.1,segment.size = 0.2,max.overlaps = 20) +
-      labs(x="Ranked TF Motifs",y=paste0("# Associated genes \nabs(Score) >= ",score.cut))
+    gAll <- figR.summ %>%
+      ggplot(aes(x=Motif,y=value,fill=variable,numActivated=numActivated,numRepressed=numRepressed)) +
+      geom_bar(stat="identity",color="lightgray",size=0.1) + theme_classic() + geom_hline(yintercept = 0) +
+      scale_fill_manual(values=c("firebrick3","steelblue4"),labels=c("# Activated","# Repressed")) +
+      theme(axis.text.x = element_text(angle=90,vjust=0.5,hjust=1,size=6),axis.text = element_text(color="black")) +
+      labs(x = "Ranked TF Motifs", y = paste0("# Associated genes \nabs(Score) >= ", score.cut),fill="Class") +
+      scale_y_continuous(labels=abs)
 
-  }
+
  if(!interactive) {
   gAll
  } else {
-   plotly::ggplotly(gAll)
+   plotly::ggplotly(gAll + theme(legend.position = "none",
+                                 axis.text.x = element_blank()),
+                    tooltip=c("Motif","numActivated","numRepressed"))
  }
+
+  }
 }
 
 
 #' Plot FigR scatter profile
 #'
 #' Scatter plot visualization of filtered TF-DORC associations based on the enrichment of each motif among the queried DORC's peaks and the correlation of the TF RNA to the DORC accessibility score
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
 #'@param marker character specifying a valid DORC gene to restrict TF drivers for
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param label boolean indicating whether or not to add text labels for TF drivers passing score filter

@@ -13,13 +13,15 @@ rankDrivers(
 )
 }
 \arguments{
-\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}}).}
+\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}})}
 
-\item{rankBy}{character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred targets passing a specified (absolute) regulation score, respectively}
+\item{rankBy}{character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred activated or repressed targets passing a specified (absolute) regulation score, respectively}
 
 \item{myLabels}{character vector specifying the subset of DORCs to test, if not running on everything}
 
 \item{score.cut}{numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified}
+
+\item{interactive}{boolean indicating whether or not to allow interactive hover-over utility for more label information (useful if visualizing too many TFs and labels are hard to distinguish). Default is FALSE}
 }
 \value{
 a ggplot2 object of the resulting plot

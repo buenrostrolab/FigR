@@ -7,9 +7,9 @@
 plotPairs(ATAC, RNA, umap.df, max.show = 300, seed = 123, pairPointSize = 1)
 }
 \arguments{
-\item{ATAC}{character vector of the ATAC barcodes returned in the resulting pairing data frame returned by the `cell_pairing` function}
+\item{ATAC}{character vector of the ATAC barcodes returned in the resulting pairing data frame returned by the \code{\link[FigR]{cell_pairing}} function}
 
-\item{RNA}{character vector of the RNA barcodes returned in the resulting pairing data frame returned by the `cell_pairing` function}
+\item{RNA}{character vector of the RNA barcodes returned in the resulting pairing data frame returned by the \code{\link[FigR]{cell_pairing}} function}
 
 \item{umap.df}{data.frame that has the ATAC/RNA co-embedding UMAP 1/2 coordinates in the first and second columns, respectively. Must have valid ATAC and RNA barcodes as row names, which will be used to subset pairs}
 

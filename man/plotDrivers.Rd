@@ -7,7 +7,7 @@
 plotDrivers(figR.d, marker, score.cut = 1, label = TRUE)
 }
 \arguments{
-\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}}).}
+\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}})}
 
 \item{marker}{character specifying a valid DORC gene to restrict TF drivers for}
 
