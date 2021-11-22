@@ -210,7 +210,7 @@ rankDrivers <- function(figR.d,
     # Prep summary stats
     figR.summ <- figR.d %>%  group_by(Motif) %>%
       dplyr::summarise(Score=mean(Score)) %>%
-      arrange(Score) %>%
+      arrange(desc(Score)) %>%
       mutate(Motif=factor(Motif,levels=as.character(Motif)))
 
     # Top and bottom %ile labels
