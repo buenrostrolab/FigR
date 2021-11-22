@@ -250,7 +250,7 @@ rankDrivers <- function(figR.d,
       mutate(numActivatedY=ifelse(diff > 0,numActivated,-numActivated),numRepressedY=ifelse(diff > 0,numRepressed,-numRepressed)) %>%
       dplyr::arrange(desc(diff)) %>%
       mutate(Motif=factor(Motif,levels=as.character(Motif))) %>%
-      select(-diff) %>% reshape2::melt(id.vars=c("Motif","numActivated","numRepressed"))
+      dplyr::select(-diff) %>% reshape2::melt(id.vars=c("Motif","numActivated","numRepressed"))
 
     # New
     # Make ggplot
