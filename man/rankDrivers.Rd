@@ -17,7 +17,7 @@ rankDrivers(
 
 \item{rankBy}{character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred activated or repressed targets passing a specified (absolute) regulation score, respectively}
 
-\item{myLabels}{character vector specifying the subset of DORCs to test, if not running on everything}
+\item{myLabels}{character vector specifying the subset of TFs to highlight on the plot, if rankBy is set to 'meanScore'. Useful if you want to see where your TFs of interest lie. If NULL (Default), we label the top and bottom 95%ile TFs}
 
 \item{score.cut}{numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified}
 

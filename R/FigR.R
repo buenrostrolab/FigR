@@ -188,7 +188,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
 #' Ranked plot of TF activators and repressors based on their inferred regulation score
 #'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
 #'@param rankBy character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred activated or repressed targets passing a specified (absolute) regulation score, respectively
-#'@param myLabels character vector specifying the subset of DORCs to test, if not running on everything
+#'@param myLabels character vector specifying the subset of TFs to highlight on the plot, if rankBy is set to 'meanScore'. Useful if you want to see where your TFs of interest lie. If NULL (Default), we label the top and bottom 95%ile TFs
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified
 #'@param interactive boolean indicating whether or not to allow interactive hover-over utility for more label information (useful if visualizing too many TFs and labels are hard to distinguish). Default is FALSE
 #'@return a ggplot2 object of the resulting plot
@@ -210,7 +210,7 @@ rankDrivers <- function(figR.d,
     # Prep summary stats
     figR.summ <- figR.d %>%  group_by(Motif) %>%
       dplyr::summarise(Score=mean(Score)) %>%
-      arrange(desc(Score)) %>%
+      arrange(desc(Score)) %>% # Activating to Repressing
       mutate(Motif=factor(Motif,levels=as.character(Motif)))
 
     # Top and bottom %ile labels

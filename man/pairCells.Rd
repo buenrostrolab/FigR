@@ -7,6 +7,10 @@
 pairCells(ATAC, RNA, keepUnique = FALSE, ...)
 }
 \arguments{
+\item{ATAC}{combined co-embedding components matrix of the ATAC cells (e.g. CCA). Must have valid ATAC cell barcode names as the rownames.}
+
+\item{RNA}{same as `ATAC`, but for RNA cells. Must have valid RNA cell barcode names as the rownames (unique from ATAC cell barcodes), and have the same number of components (columns) as the `ATAC` matrix}
+
 \item{keepUnique}{boolean indicating whether or not to remove any resulting many-to-many ATAC-RNA paired cells returned by the geodesic pairing method (depending on what the `max_multimatch` parameter is set to in {FigR}[cell_pairing], which defaults to 5). Default is FALSE, meaning in the returned pairing, there can a single cell in the larger dataset paired to upto `max_multimatch` cells in the smaller dataset. See {FigR}[cell_pairing] for more details. If set to TRUE, we further filter pairs and return for each cell in the larger dataset the best match in the smaller dataset (among the multiple options, if any) based on the min euclidean distances between pair options (in the supplied reduced dimension space). Useful for RNA to ATAC cell cluster label transfer (since each ATAC cell can only acquire a single cluster identity based on the best RNA cell match), but not required for downstream analyses (peak-gene correlations and TF-DORC associations)}
 
 \item{...}{additional parameters passed to \code{\link[FigR]{cell_pairing}}. Useful parameters for enabling a search solution include `search_range` and `min_subgraph_size`, which dictates how cells are potentially excluded from being paired}
