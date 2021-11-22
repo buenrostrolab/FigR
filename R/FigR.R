@@ -257,22 +257,26 @@ rankDrivers <- function(figR.d,
     gAll <- figR.summ %>%
       ggplot(aes(x=Motif,y=value,fill=variable,numActivated=numActivated,numRepressed=numRepressed)) +
       geom_bar(stat="identity",color="lightgray",size=0.1) + theme_classic() + geom_hline(yintercept = 0) +
-      scale_fill_manual(values=c("firebrick3","steelblue4"),labels=c("# Activated","# Repressed")) +
+      scale_fill_manual(values=c("firebrick3","steelblue4"),labels=c("Activated","Repressed")) +
       theme(axis.text.x = element_text(angle=90,vjust=0.5,hjust=1,size=6),axis.text = element_text(color="black")) +
       labs(x = "Ranked TF Motifs", y = paste0("# Associated genes \nabs(Score) >= ", score.cut),fill="Class") +
       scale_y_continuous(labels=abs)
-
+}
 
  if(!interactive) {
   gAll
  } else {
+   if(rankBy %in% "meanScore"){
+     plotly::ggplotly(gAll)
+   }    else{
    plotly::ggplotly(gAll + theme(legend.position = "none",
                                  axis.text.x = element_blank()),
                     tooltip=c("Motif","numActivated","numRepressed"))
- }
+  }
 
   }
 }
+
 
 
 #' Plot FigR scatter profile
