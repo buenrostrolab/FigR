@@ -69,7 +69,7 @@ fig.d <- runFigR(ATAC.se=,ATAC.SE,
 require(ggplot2)
 require(BuenColors) # https://github.com/caleblareau/BuenColors
 
-fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) %>%
+fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) +
           geom_point_rast(size=0.01,shape=16) + 
           theme_classic() +
           scale_color_gradientn(colours = jdb_palette("solar_extra"),limits=c(-4,4),oob = scales::squish)
