@@ -4,9 +4,9 @@
 ### Contact: <vinay_kartha@g.harvard.edu>
 ### Affiliation: Buenrostro Lab, Department of Stem Cell and Regenerative Biology, Harvard University
 
-#' Run FigR TF-DORC associations
+#' Infer FigR TF-DORC associations
 #'
-#'Function to run TF motif-to-gene associations using reference DORC peak-gene mappings
+#'Function to run TF motif-to-gene associations using reference DORC peak-gene mappings and TF RNA expression levels
 #'@param ATAC.se SummarizedExperiment object of peak x cell scATAC-seq data, the same as used to compute DORCs using \code{\link[FigR]{runGenePeakcorr}}
 #'@param dorcK numeric specifying the number of dorc nearest-neighbors to pool peaks from for the motif enrichment per DORC. Default is 30, i.e. set to ~3 percent of total DORCs determined
 #'@param dorcTab data.frame object containing significant peak-gene pairs using which DORC scores will be computed. Must be a filtered set returned from \code{\link[FigR]{runGenePeakcorr}}. IMPORTANT: Make sure the exact same scATAC SE peak set was used when determining DORCs that is used here to get corresponding DORC peak counts
@@ -21,15 +21,15 @@
 #'@export
 #'@author Vinay Kartha
 #'
-runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg peaks etc.
-                    dorcK=30, # How many dorc kNNs are we using to pool peaks
-                    dorcTab, # peak x DORC connections (should contain indices relative to peaks in ATAC.se)
-                    n_bg=50, # No. of background peaks to use for motif enrichment Z test
-                    genome, # One of mm10, hg19, hg38, with no default
-                    dorcMat, # Expect smoothed
-                    rnaMat, # Expect smoothed
-                    dorcGenes=NULL, # If only running on a subset of genes
-                    nCores=1
+runFigRGRN <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg peaks etc.
+                       dorcK=30, # How many dorc kNNs are we using to pool peaks
+                       dorcTab, # peak x DORC connections (should contain indices relative to peaks in ATAC.se)
+                       n_bg=50, # No. of background peaks to use for motif enrichment Z test
+                       genome, # One of mm10, hg19, hg38, with no default
+                       dorcMat, # Expect smoothed
+                       rnaMat, # Expect smoothed
+                       dorcGenes=NULL, # If only running on a subset of genes
+                       nCores=1
 ){
   # Must be matched data
   stopifnot(all.equal(ncol(dorcMat),ncol(rnaMat)))
@@ -186,7 +186,7 @@ runFigR <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR bg 
 #' Rank TF drivers
 #'
 #' Ranked plot of TF activators and repressors based on their inferred regulation score
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigRGRN}})
 #'@param rankBy character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred activated or repressed targets passing a specified (absolute) regulation score, respectively
 #'@param myLabels character vector specifying the subset of TFs to highlight on the plot, if rankBy is set to "meanScore". Useful if you want to see where your TFs of interest lie. If NULL (Default), we label the top and bottom 95 percentile TFs
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on, only if rankBy is set to "nTargets". Default is 1 if "nTargets" and no custom cut-off is specified
@@ -282,7 +282,7 @@ rankDrivers <- function(figR.d,
 #' Plot FigR scatter profile
 #'
 #' Scatter plot visualization of filtered TF-DORC associations based on the enrichment of each motif among the queried DORC's peaks and the correlation of the TF RNA to the DORC accessibility score
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigRGRN}})
 #'@param marker character specifying a valid DORC gene to restrict TF drivers for
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param label boolean indicating whether or not to add text labels for TF drivers passing score filter
@@ -327,7 +327,7 @@ plotDrivers <- function(figR.d,
 #' Plot FigR heatmap
 #'
 #' Heatmap visualization of TF-DORC associations based on the regulation scores inferred by FigR
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}}).
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigRGRN}}).
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
@@ -389,7 +389,7 @@ plotfigRHeatmap <- function(figR.d,
 #' Plot FigR Network
 #'
 #' Network visualization of TF-DORC associations based on the regulation scores inferred by FigR
-#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigR}})
+#'@param figR.d data.frame of results returned by \code{\link[FigR]{runFigRGRN}})
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)

@@ -13,7 +13,7 @@ plotfigRNetwork(
 )
 }
 \arguments{
-\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}})}
+\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigRGRN}})}
 
 \item{score.cut}{numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1}
 

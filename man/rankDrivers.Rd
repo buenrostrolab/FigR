@@ -13,7 +13,7 @@ rankDrivers(
 )
 }
 \arguments{
-\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigR}})}
+\item{figR.d}{data.frame of results returned by \code{\link[FigR]{runFigRGRN}})}
 
 \item{rankBy}{character specifying one of "meanScore" or "nTargets" to either rank TFs by the mean regulation score across all genes, or by the total number of inferred activated or repressed targets passing a specified (absolute) regulation score, respectively}
 

@@ -10,7 +10,7 @@ Description: This R package supports the integration of scATAC-seq and scRNA-seq
 URL: https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1
 BugReports: https://github.com/buenrostrolab/FigR/issues
 Imports: Matrix, SummarizedExperiment, GenomicRanges, dplyr, ggplot2, chromVAR, doParallel, doSNOW, ggrepel, ComplexHeatmap, BuenColors, pbmcapply, tibble, scales, reshape2, Rmpfr, BSgenome.Hsapiens.UCSC.hg19, FNN
-Depends: Matrix, SummarizedExperiment, dplyr, ggplot2, chromVAR
+Depends: Matrix, SummarizedExperiment, dplyr, ggplot2, chromVAR, motifmatchr
 Suggests: optmatch, BSgenome.Mmusculus.UCSC.mm10, BSgenome.Hsapiens.UCSC.hg38, networkD3, knitr, rmarkdown
 VignetteBuilder: knitr
 License: MIT + file LICENSE
