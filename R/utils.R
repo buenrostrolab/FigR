@@ -118,6 +118,8 @@ smoothScoresNN <- function(NNmat,
                            barcodesList=NULL,
                            nCores = 1)
 {
+  stopifnot(all.equal(nrow(NNmat),ncol(mat)))
+
   if (is.null(rownames(NNmat)))
     stop("NN matrix has to have matching cell IDs as rownames\n")
   if (!all.equal(rownames(NNmat), colnames(mat)))
@@ -263,6 +265,188 @@ motifPeakZtest <- function(peakSet,
 
   # return df of enrichment scores
   return(m.p)
+}
+
+#' Plot marker scores on single cell scatter plots
+#'
+#' Function to plot variable of interest (e.g. scATAC-seq gene score, motif score, scRNA-seq expression etc.) onto existing tSNE/UMAP coordinates of single cell clusters
+#'
+#'@param df data.frame object of 2-D coordinates, where each row is a cell and the first two columns corresponds to the first (x-axis) and second (y-axis) dimensions to use for the plot (e.g. UMAP coordinates). Can have additional cell metadata columns used for splitting (see splitBy parameter)
+#'@param markerMat matrix of scores containing markers to visualize. Can be a sparse matrix. Must have rownames
+#'@param markers character vector of markers to visualize (can list multiple). Must be one of the rownames in markerMat
+#'@param pointSize integer specifying point size to use for ggplot (passed to the geom_point() layer in ggplot). Default is 0.5
+#'@param plotClean boolean indicating whether or not to return a 'clean' plot without any axes
+#'@param rasteRize boolean indicating whether to use raster point rendering (to avoid giant file sizes and too many point layers in PDFs). Requires ggrastr package if set to TRUE (Default)
+#'@param splitBy character indicating a single variable to split cells by using facets when visualizing. Must be a valid column name in df
+#'@param minCutoff cut off to use for capping  minimum values prior to visualization. Can either be a raw numeric value, a percentile value cut-off (0-1) or the number of standard deviations below the mean, used to set the minimum value in the dataset prior to plotting. For percentiles, must be a character with 'q' before the percentile cut-off value (e.g. 'q0.1' for 10\%ile minimum). For standard deviation-based capping, must be a character with 'sd' before the cut-off value (e.g. 'sd2' for using 2 standard deviations below the mean as the minimum value displayed)
+#'@param maxCutoff cut off to use for capping  maximum values prior to visualization. Can either be a raw numeric value, a percentile value cut-off (0-1) or the number of standard deviations above the mean, used to set the minimum value in the dataset prior to plotting. For percentiles, must be a character with 'q' before the percentile cut-off value (e.g. 'q0.9' for 90\%ile maximum). For standard deviation-based capping, must be a character with 'sd' before the cut-off value (e.g. 'sd2' for using 2 standard deviations above the mean as the maximum value displayed)
+#'@param colorPalette color palette name specification to use for coloring points. Default is "solar_extra". See \href{https://github.com/caleblareau/BuenColors}{BuenColors} package developed by Caleb Lareau for more palette options
+#'@param legend.position character specifying where to place the legend. Valid options are "top", "bottom", "left", "right", or "none" (to remove the legend completely). Default is bottom
+#'@param showDataRange boolean indicating whether or not to show the data numeric range in the legends (only applies if legends are being displayed). Default is TRUE. If set to FALSE, just shows as min and max
+#'@param combine boolean indicating whether or not to merge plots and display as grid.Default is TRUE
+#'@param ... extra parameters passed to cowplot's \code{\link[cowplot]{plot_grid}} function to control organization of plot grids. Useful parameters include nrow and ncol that control the number of rows and columns in the layout, respectively
+#'@return If a single marker is queried, or combine is set to TRUE for multiple markers, a ggplot object will be printed to graphics window unless assigned to variable. If combine is set to FALSE, then a list object of individual plots per marker is returned
+#'@import ggplot2 ggrastr BuenColors cowplot
+#'@export
+#'@author Vinay Kartha
+plotMarker2D <- function(df, # data frame of tSNE or UMAP coordinates for single cells
+                         markers, # name associated with markerScore
+                         markerMat, # Matrix of scores
+                         pointSize=0.5,
+                         plotClean=TRUE,
+                         rasteRize=TRUE,
+                         splitBy=NULL,
+                         minCutoff=NULL,
+                         maxCutoff=NULL,
+                         colorPalette="solar_extra",
+                         legend.position="bottom",
+                         showDataRange=TRUE,
+                         combine=TRUE,
+                         ... # Extra to cowplot
+){
+
+  # CHECK ON DATA FRAME
+  stopifnot(class(df)=="data.frame")
+
+  if(!is.null(splitBy))
+    if(!all(splitBy %in% colnames(df)))
+      stop("One or more of the splitBy variables is not a column in the provided dataframe\n")
+  # Assume first two columns are UMAP/tSNE/PCA coords
+  dimnames <- colnames(df)[1:2]
+
+
+  # CHECK FEATURES
+
+  if(is.null(markers)) {
+    stop("Must provide at least 1 marker to plot")  } else {
+
+      if (!(all(markers %in% rownames(markerMat)))) {
+        message("One or more of the features supplied is not present in the matrix provided: \n")
+        message(markers[!markers %in% rownames(markerMat)], sep = ", ")
+        cat("\n")
+        stop()
+      }
+    }
+
+  markerMat <- markerMat[markers,,drop=FALSE]
+
+  if(length(markers) > 20 & combine)
+    stop("Plotting this many features at once can lead to squished graphics ..\n")
+
+
+  # Score transformations
+  transformScores <- function(markerScore,minCutoff,maxCutoff){
+
+    if(!is.null(minCutoff)){
+      # Quantile cut-off
+      if(grepl(pattern = '^q.*',minCutoff)){
+        quantile.cutMin <- as.numeric(strsplit(minCutoff,"q",fixed = TRUE)[[1]][2])
+        if(!quantile.cutMin > 0 & quantile.cutMin < 1)
+          stop("Must provide a fractional value to use for quantile cutoff. See help page for details\n")
+        minCutoff <- quantile(markerScore,quantile.cutMin)}
+
+      # SD cut-off
+      if(grepl(pattern = '^sd.*',minCutoff)){
+        sd.cutMin <- as.numeric(strsplit(minCutoff,"sd",fixed = TRUE)[[1]][2])
+        if(sd.cutMin > 0 & sd.cutMin < 1)
+          stop("SD cut-off must be an integer number representing the number of standard deviations away from the mean to use. See help page for details\n")
+        minCutoff <- mean(markerScore) - (sd.cutMin * sd(markerScore))
+      }
+    } else {
+      minCutoff <- min(markerScore)
+    }
+
+    if(!is.null(maxCutoff)) {
+      # Quantile cut-off
+      if(grepl(pattern = '^q.*',maxCutoff)){
+        quantile.cutMax <- as.numeric(strsplit(maxCutoff,"q",fixed = TRUE)[[1]][2])
+        if(!quantile.cutMax > 0 & quantile.cutMax < 1)
+          stop("Must provide a fractional value to use for quantile cutoff. See help page for details\n")
+        maxCutoff <- quantile(markerScore,quantile.cutMax)}
+
+      # SD cut-off
+      if(grepl(pattern = '^sd.*',maxCutoff)){
+        sd.cutMax <- as.numeric(strsplit(maxCutoff,"sd",fixed = TRUE)[[1]][2])
+        if(sd.cutMax > 0 & sd.cutMax < 1)
+          stop("SD cut-off must be an integer number representing the number of standard deviations away from the mean to use. See help page for details\n")
+        maxCutoff <- mean(markerScore) + (sd.cutMax * sd(markerScore))
+      }
+    } else {
+      maxCutoff <- max(markerScore)
+    }
+
+    # Transform
+    markerScore[markerScore <= minCutoff] <- minCutoff
+    markerScore[markerScore >= maxCutoff] <- maxCutoff
+    markerScore
+  }
+
+  gglist <- lapply(markers,function(i) {
+
+    cat("Plotting ",i,"\n")
+
+    # Transform
+    mScore <- transformScores(markerScore = markerMat[i,],
+                              minCutoff=minCutoff,
+                              maxCutoff=maxCutoff)
+
+    i <- gsub(pattern = "-",replacement = "",x = i)
+
+    df[,i] <- mScore
+
+
+    if(legend.position!="bottom"){
+      if(!legend.position %in% c("top","right","left","none"))
+        stop("Must specify a valid legend position speciciation .. See function options for details\n")
+    }
+
+    if(rasteRize){
+      require(ggrastr)
+      pointfun <- geom_point_rast
+    } else {
+      pointfun <- geom_point
+    }
+
+    if(!showDataRange){
+      myColfun <- scale_color_gradientn(colours = BuenColors::jdb_palette(colorPalette),na.value = "orange",breaks=range(df[,i]),labels=c("min","max"))
+    } else {
+      myColfun <- scale_color_gradientn(colours = BuenColors::jdb_palette(colorPalette),na.value = "orange",breaks=scales::breaks_pretty(n=3))
+    }
+
+    g <- ggplot(df,aes_string(dimnames[1],dimnames[2],color=i)) +
+      pointfun(size=pointSize) +
+      theme_classic() +
+      labs(title= i) +
+      theme(plot.title = element_text(hjust=0.5),legend.position=legend.position,
+            legend.key.size = unit(0.3, "cm"),legend.text = element_text(size=5),legend.title=element_blank())+
+      #scale_color_gradientn(colours = BuenColors::jdb_palette(colorPalette),na.value = "orange",breaks=myLegBreaks)
+      myColfun
+
+    # Split?
+    if(!is.null(splitBy))
+      g <- g + facet_wrap(as.formula(paste("~", splitBy))) + theme(strip.background = element_blank())
+
+    if(plotClean)
+      g <- g + theme(axis.line = element_blank(),
+                     axis.ticks = element_blank(),
+                     axis.title = element_blank(),
+                     axis.text = element_blank())
+
+    g
+  })
+
+
+  if(length(gglist)==1){
+    return(gglist[[1]])
+  } else if(combine){
+    cat("Merging plots ..\n")
+    return(cowplot::plot_grid(plotlist = gglist,align="hv",...))
+  } else {
+    cat("Returning list of plots\n")
+    names(gglist) <- markers
+    return(gglist)
+  }
+
 }
 
 #' Fetch TF names
