@@ -84,7 +84,7 @@ We are actively developing this package and will include more detailed vignettes
 Check out our walkthroughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
 
 <p align="left">
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_shareseq_tutorial.html"><img src="images/skinv2.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/web_only/FigR_shareseq_tutorial.html"><img src="images/skinv2.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
 
 </p>
 
