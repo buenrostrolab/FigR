@@ -81,15 +81,15 @@ fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) +
 
 We are actively developing this package and will include more detailed vignettes soon!
 
-Check out our walk throughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
+Check out our walkthroughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
 
 <p align="left">
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_shareseq_tutorial.html?token=ACJLS4VJYYAKAALD55U2IWDBVZPXG"><img src="images/skinv2.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_shareseq_tutorial.html"><img src="images/skinv2.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
 
 </p>
 
 <p align="center">
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_stim_tutorial.html?token=ACJLS4W6S3SXKRKYUSB6NSLBVZPU2"><img src="images/PBMCs.png"  title="FigR on independently assayed PBMC data" height="30%" width="35%"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/web_only/FigR_stim_tutorial.html"><img src="images/PBMCs.png"  title="FigR on independently assayed PBMC data" height="30%" width="35%"></a>
 </p>
 
 # Reference
