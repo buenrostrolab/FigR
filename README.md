@@ -51,13 +51,13 @@ Once you have your DORC definitions, you can use this, along with the paired RNA
 
 ```
 # Run FigR
-fig.d <- runFigR(ATAC.se=,ATAC.SE,
-                 rnaMat=rnaMat.smooth, # Smoothed RNA matrix using paired cell kNNs
-                 dorcMat=dorcMat.smooth,
-                 dorcTab=cisCor.filt,
-                 genome="hg19",
-                 dorcGenes=dorcGenes,
-                 nCores=4)
+fig.d <- runFigRGRN(ATAC.se=,ATAC.SE,
+                    rnaMat=rnaMat.smooth, # Smoothed RNA matrix using paired cell kNNs
+                    dorcMat=dorcMat.smooth,
+                    dorcTab=cisCor.filt,
+                    genome="hg19",
+                    dorcGenes=dorcGenes,
+                    nCores=4)
 
 ```
 
@@ -89,7 +89,7 @@ Check out our walk throughs on applying the FigR framework to multi-modal and in
 </p>
 
 <p align="center">
-<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_biorad_tutorial.html?token=ACJLS4W6S3SXKRKYUSB6NSLBVZPU2"><img src="images/PBMCs.png"  title="FigR on independently assayed PBMC data" height="30%" width="35%"></a>
+<a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/FigR_stim_tutorial.html?token=ACJLS4W6S3SXKRKYUSB6NSLBVZPU2"><img src="images/PBMCs.png"  title="FigR on independently assayed PBMC data" height="30%" width="35%"></a>
 </p>
 
 # Reference
