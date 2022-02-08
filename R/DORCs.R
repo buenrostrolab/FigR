@@ -395,6 +395,12 @@ getDORCScores <- function(ATAC.se,
 
   time_elapsed <- Sys.time()
 
+  if(Sys.info()['sysname'] %in% "Windows"){
+    message("Windows OS detected .. Cannot support parallilzation using mclapply for mc.cores > 1")
+    message("Using 1 core instead ..\n")
+    nCores <- 1
+  }
+
   cat("Computing DORC scores ..\n")
   cat("Running in parallel using ", nCores, "cores ..\n")
 

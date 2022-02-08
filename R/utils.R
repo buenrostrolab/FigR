@@ -149,6 +149,14 @@ smoothScoresNN <- function(NNmat,
           sep = "")
     }
   }
+
+  if(Sys.info()['sysname'] %in% "Windows"){
+    message("Windows OS detected .. Cannot support parallilzation using mclapply for mc.cores > 1")
+    message("Using 1 core instead ..\n")
+    nCores <- 1
+  }
+
+
   opts <- list()
   pb <- txtProgressBar(min = 0, max = ncol(mat), style = 3)
   progress <- function(n) setTxtProgressBar(pb, n)
