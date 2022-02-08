@@ -1,0 +1,67 @@
+template:
+  bootstrap: 5
+  bootswatch: sandstone
+  theme: breeze-dark
+  bslib:
+    pkgdown-nav-height: 150px
+
+reference:
+ - title: Peak-gene correlations
+   contents:
+    - runGenePeakcorr
+    - dorcJPlot
+    - getDORCScores
+
+ - title: TF-DORC associations
+   contents:
+    - runFigRGRN
+    - motifPeakZtest
+
+ - title: scATAC-scRNA scOptMatch cell pairing
+   contents:
+    - pairCells
+    - plotPairs
+
+ - title: Visualizing FigRGRN results
+   contents:
+    - plotDrivers
+    - rankDrivers
+    - plotfigRHeatmap
+    - plotfigRNetwork
+
+ - title: Miscellaneous helper functions
+   contents:
+    - centerCounts
+    - smoothScoresNN
+    - plotMarker2D
+    - splitAndFetch
+
+navbar:
+ bg: primary
+ structure:
+   left: [tutorials, reference, news]
+   right: [search, github, contact]
+ components:
+   tutorials:
+     text: "Tutorials"
+     menu:
+     - text: "Pairing scATAC and scRNA-seq"
+       href: articles/FigR_stim.html
+     - text: "FigR on multi-modal data"
+       href: articles/FigR_stim.html
+
+   reference:
+      icon: fa-gears
+      text: "Functions"
+      href: reference/index.html
+
+   news:
+      icon: fa-newspaper-o
+      text: "News"
+
+resource_files:
+  - media/FigR.PNG
+  - media/skinv2.png
+  - media/PBMCs.png
+  - vignettes/web_only/FigR_shareseq_tutorial.html
+  - vignettes/web_only/FigR_stim_tutorial.html
