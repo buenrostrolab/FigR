@@ -398,6 +398,11 @@ plotMarker2D <- function(df, # data frame of tSNE or UMAP coordinates for single
                               minCutoff=minCutoff,
                               maxCutoff=maxCutoff)
 
+    if (sum(mScore) == 0)
+      warning("No counts detected for marker: ", i, "\n")
+    if (anyNA(mScore))
+      warning("NAs detected for marker: ", i, "\n")
+
     i <- gsub(pattern = "-",replacement = "",x = i)
 
     df[,i] <- mScore
