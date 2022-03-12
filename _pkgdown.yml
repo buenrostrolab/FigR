@@ -1,9 +1,10 @@
 template:
   bootstrap: 5
   bootswatch: sandstone
-  theme: breeze-dark
+  theme: github-light
   bslib:
     pkgdown-nav-height: 150px
+url: https://buenrostrolab.github.io/FigR-docs/
 
 reference:
  - title: Peak-gene correlations
@@ -48,7 +49,7 @@ navbar:
      - text: "Pairing scATAC and scRNA-seq"
        href: articles/FigR_stim.html
      - text: "FigR on multi-modal data"
-       href: articles/FigR_stim.html
+       href: articles/FigR_shareseq.html
 
    reference:
       icon: fa-gears
