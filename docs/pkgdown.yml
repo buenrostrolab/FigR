@@ -1,0 +1,11 @@
+pandoc: 2.11.2
+pkgdown: 2.0.2
+pkgdown_sha: ~
+articles:
+  FigR_shareseq: FigR_shareseq.html
+  FigR_stim: FigR_stim.html
+last_built: 2022-03-12T21:13Z
+urls:
+  reference: https://buenrostrolab.github.io/FigR-docs/reference
+  article: https://buenrostrolab.github.io/FigR-docs/articles
+
