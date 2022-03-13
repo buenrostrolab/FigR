@@ -1,10 +1,11 @@
+url: https://buenrostrolab.github.io/FigR/
+
 template:
   bootstrap: 5
   bootswatch: sandstone
   theme: github-light
   bslib:
     pkgdown-nav-height: 150px
-url: https://buenrostrolab.github.io/FigR-docs/
 
 reference:
  - title: Peak-gene correlations
