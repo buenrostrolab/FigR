@@ -2,8 +2,9 @@ Package: FigR
 Type: Package
 Title: Functional Inference of Gene Regulation (FigR) using paired single cell ATAC-seq and RNA-seq data
 Version: 0.1.0
-Author: Vinay Kartha, Jason D. Buenrostro
-Maintainer: Vinay Kartha <vinay_kartha@g.harvard.edu>
+Authors@R: c(
+     person("Vinay","Kartha",email= "vinay_kartha@g.harvard.edu",role = c("aut", "cre")),
+     person("Jason","D. Buenrostro",role = c("aut")))
 Description: This R package supports the integration of scATAC-seq and scRNA-seq data using which one can determine
     cis-regulatory elements linked to gene to define domains of regulatory chromatin (DORCs), and TF-gene associations using FigR.
     This framework is associated with (our preprint)[https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1]
