@@ -33,7 +33,7 @@ cisCor <- runGenePeakcorr(ATAC.se = ATAC.SE,
 cisCor.filt <- cisCor %>% filter(pvalZ <= 0.05)
 
 # Determine DORC genes
-dorcGenes <- cisCor.filt %>% dorcJplot(cutoff=7, # Default
+dorcGenes <- cisCor.filt %>% dorcJPlot(cutoff=7, # Default
                                        returnGeneList = TRUE)
 
 # Get DORC scores
@@ -68,6 +68,7 @@ fig.d <- runFigRGRN(ATAC.se=,ATAC.SE,
 
 # Visualize all TF-DORC regulation scores (Scatter plot)
 require(ggplot2)
+require(ggrastr)
 require(BuenColors) # https://github.com/caleblareau/BuenColors
 
 fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) +
