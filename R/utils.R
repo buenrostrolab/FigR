@@ -183,7 +183,7 @@ smoothScoresNN <- function(NNmat,
 
   close(pb)
   cat("Merging results ..\n")
-  smoothedMat <- dplyr::bind_cols(matL) %>% data.matrix() %>% Matrix(sparse=TRUE)
+  smoothedMat <- dplyr::bind_cols(matL) %>% data.matrix() %>% Matrix::Matrix(sparse=TRUE)
   rownames(smoothedMat) <- rownames(mat)
 
   time_elapsed <- Sys.time() - time_elapsed

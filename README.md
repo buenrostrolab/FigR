@@ -33,10 +33,11 @@ cisCor <- runGenePeakcorr(ATAC.se = ATAC.SE,
 cisCor.filt <- cisCor %>% filter(pvalZ <= 0.05)
 
 # Determine DORC genes
-dorcGenes <- cisCor.filt %>% dorcJplot()
+dorcGenes <- cisCor.filt %>% dorcJplot(cutoff=7, # Default
+                                       returnGeneList = TRUE)
 
 # Get DORC scores
-dorcMat <- getDORCscores(ATAC.SE,dorcTab=cisCor.filt,geneList=dorcGenes,nCores=4)
+dorcMat <- getDORCScores(ATAC.SE,dorcTab=cisCor.filt,geneList=dorcGenes,nCores=4)
 
 # Smooth DORC scores (using cell KNNs)
 dorcMat.smooth <- smoothScoresNN(NNmat=cellKNN.mat,mat=dorcMat,nCores=4)
