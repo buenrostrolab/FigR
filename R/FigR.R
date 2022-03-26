@@ -243,7 +243,7 @@ rankDrivers <- function(figR.d,
     message("Using absolute score cut-off of: ",score.cut," ..\n")
 
     # Prep summary stats
-    figR.summ  <- figR.d %>% filter(abs(Score) >= score.cut) %>%
+    figR.summ  <- figR.d %>% dplyr::filter(abs(Score) >= score.cut) %>%
       group_by(Motif) %>% dplyr::select(-DORC) %>%
       dplyr::summarize(numActivated = sum(Score > 0), numRepressed = sum(Score < 0)) %>%
       dplyr::mutate(diff = numActivated -numRepressed) %>% # log2FC works too
@@ -298,7 +298,7 @@ plotDrivers <- function(figR.d,
   if(!marker %in% figR.d$DORC)
     stop("Marker specified is not a valid DORC symbol found in the data.frame")
 
-  d <- figR.d %>% filter(DORC %in% marker) %>% mutate(isSig=ifelse(abs(Score) >= score.cut,"Yes","No"))
+  d <- figR.d %>% dplyr::filter(DORC %in% marker) %>% mutate(isSig=ifelse(abs(Score) >= score.cut,"Yes","No"))
   if(label){
   d$Label <- d$Motif
   d$Label[d$isSig %in% "No"] <- ""
@@ -346,15 +346,15 @@ plotfigRHeatmap <- function(figR.d,
 
   message("Using absolute score cut-off of: ",score.cut," ..\n")
 
-  DORCsToKeep <- figR.d %>% filter(abs(Score) >= score.cut) %>% pull(DORC) %>% unique()
-  TFsToKeep <- figR.d %>% filter(abs(Score) >= score.cut) %>% pull(Motif) %>% unique()
+  DORCsToKeep <- figR.d %>% dplyr::filter(abs(Score) >= score.cut) %>% pull(DORC) %>% unique()
+  TFsToKeep <- figR.d %>% dplyr::filter(abs(Score) >= score.cut) %>% pull(Motif) %>% unique()
 
 
   if(!is.null(DORCs)){
     if(!all(DORCs %in% figR.d$DORC))
       stop("One or more DORCs specified is not a valid DORC symbol found in the data.frame")
     DORCsToKeep <- intersect(DORCsToKeep,DORCs)
-    TFsToKeep <- figR.d %>% filter(abs(Score) >= score.cut & DORC %in% DORCsToKeep) %>% pull(Motif) %>% unique()
+    TFsToKeep <- figR.d %>% dplyr::filter(abs(Score) >= score.cut & DORC %in% DORCsToKeep) %>% pull(Motif) %>% unique()
   }
 
 
@@ -362,11 +362,11 @@ plotfigRHeatmap <- function(figR.d,
     if(!all(TFs %in% figR.d$Motif))
       stop("One or more TFs specified is not a valid TF symbol found in the data.frame")
     TFsToKeep <- intersect(TFsToKeep,TFs)
-    DORCsToKeep <- figR.d %>% filter(abs(Score) >= score.cut & Motif %in% TFsToKeep) %>% pull(DORC) %>% unique()
+    DORCsToKeep <- figR.d %>% dplyr::filter(abs(Score) >= score.cut & Motif %in% TFsToKeep) %>% pull(DORC) %>% unique()
   }
 
 
-  net.d <- figR.d %>% filter(DORC %in% DORCsToKeep & Motif %in% TFsToKeep) %>%
+  net.d <- figR.d %>% dplyr::filter(DORC %in% DORCsToKeep & Motif %in% TFsToKeep) %>%
     reshape2::dcast(DORC ~ Motif) %>%
     tibble::column_to_rownames("DORC") %>% as.matrix()
 
@@ -406,13 +406,13 @@ plotfigRNetwork <- function(figR.d,
 # Network view
 
 # Filter
-net.dat <-  figR.d %>% filter(abs(Score) >= score.cut)
+net.dat <-  figR.d %>% dplyr::filter(abs(Score) >= score.cut)
 
 if(!is.null(DORCs))
-  net.dat <- net.dat %>% filter(DORC %in% DORCs)
+  net.dat <- net.dat %>% dplyr::filter(DORC %in% DORCs)
 
 if(!is.null(TFs))
-  net.dat <- net.dat %>% filter(Motif %in% TFs)
+  net.dat <- net.dat %>% dplyr::filter(Motif %in% TFs)
 
 net.dat$Motif <- paste0(net.dat$Motif, ".")
 net.dat$DORC <- paste0(net.dat$DORC)
