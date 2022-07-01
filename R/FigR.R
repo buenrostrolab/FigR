@@ -14,7 +14,7 @@
 #'@param genome character specifying a valid genome assembly to use for peak GC content estimation and background peak determination. Must be one of "hg19","hg38", or "mm10", and requires the corresponding genomes package e.g. \code{\link[BSgenome.Hsapiens.UCSC.hg19]{BSgenome.Hsapiens.UCSC.hg19}} for hg19
 #'@param dorcMat Matrix object of smoothed single-cell DORC accessibility scores
 #'@param rnaMat Matrix object of smoothed single-cell RNA expression values
-#'@param dorcGenes character vector specifying the subset of DORCs to test, if not running on everything
+#'@param dorcGenes character vector specifying the subset of DORCs to test, if not running on everything. Note: We still use the entire list of DORCs found in dorcMat to determine dorc KNNs from, but will only test and include results for these specified genes (also must exist in the provided RNA matrix rnaMat as rownames)
 #'@param nCores numeric specifying the number of cores to run DORCs in parallel. Default is 1, i.e. don't use parallel backend
 #'@return a data.frame with all TF-DORC motif enrichment and correlation associations, and the corresponding FigR regulation score for each association
 #'@import dplyr Matrix SummarizedExperiment chromVAR
@@ -141,7 +141,7 @@ runFigRGRN <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR 
                          .packages = c("FigR", "dplyr","Matrix","Rmpfr")) %dopar%   {
                            # Take peaks associated with gene and its k neighbors
                            # Pool and use union for motif enrichment
-                           DORCNNpeaks <- unique(dorcTab$Peak[dorcTab$Gene %in% c(g,dorcGenes[DORC.knn[g,]])])
+                           DORCNNpeaks <- unique(dorcTab$Peak[dorcTab$Gene %in% c(g,rownames(dorcMat)[DORC.knn[g,]])])
 
                            if(usePeakNames)
                              DORCNNpeaks <- which(rownames(ATAC.se) %in% DORCNNpeaks) # Convert to index relative to input

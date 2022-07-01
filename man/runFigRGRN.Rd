@@ -31,7 +31,7 @@ runFigRGRN(
 
 \item{rnaMat}{Matrix object of smoothed single-cell RNA expression values}
 
-\item{dorcGenes}{character vector specifying the subset of DORCs to test, if not running on everything}
+\item{dorcGenes}{character vector specifying the subset of DORCs to test, if not running on everything. Note: We still use the entire list of DORCs found in dorcMat to determine dorc KNNs from, but will only test and include results for these specified genes (also must exist in the provided RNA matrix rnaMat as rownames)}
 
 \item{nCores}{numeric specifying the number of cores to run DORCs in parallel. Default is 1, i.e. don't use parallel backend}
 }
