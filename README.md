@@ -98,4 +98,4 @@ You may also directly check out our walkthroughs on applying the FigR framework 
 
 # Reference / Citation
 
-See our [recent preprint](https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1) detailing  the use of the FigR framework for gene regulatory network inference using scATAC and scRNA-seq integration
+See our [published manuscript](https://www.sciencedirect.com/science/article/pii/S2666979X22001082) detailing  the use of the FigR framework for gene regulatory network inference using scATAC and scRNA-seq integration

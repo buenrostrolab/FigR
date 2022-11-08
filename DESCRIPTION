@@ -7,12 +7,12 @@ Authors@R: c(
      person("Jason","D. Buenrostro",role = c("aut")))
 Description: This R package supports the integration of scATAC-seq and scRNA-seq data using which one can determine
     cis-regulatory elements linked to gene to define domains of regulatory chromatin (DORCs), and TF-gene associations using FigR.
-    This framework is associated with (our preprint)[https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1]
+    This framework is associated with (our manuscript)[https://www.sciencedirect.com/science/article/pii/S2666979X22001082] published in 2022
 URL: https://buenrostrolab.github.io/FigR/
 BugReports: https://github.com/buenrostrolab/FigR/issues
-Imports: Matrix, SummarizedExperiment, GenomicRanges, dplyr, ggplot2, chromVAR, doParallel, doSNOW, ggrepel, ComplexHeatmap, BuenColors, pbmcapply, tibble, scales, reshape2, Rmpfr, BSgenome.Hsapiens.UCSC.hg19, FNN
+Imports: Matrix, SummarizedExperiment, GenomicRanges, dplyr, ggplot2, chromVAR, doParallel, doSNOW, ggrepel, ComplexHeatmap, BuenColors, pbmcapply, tibble, scales, reshape2, Rmpfr, optmatch, FNN
 Depends: Matrix, SummarizedExperiment, dplyr, ggplot2, cowplot, chromVAR, motifmatchr
-Suggests: optmatch, BSgenome.Mmusculus.UCSC.mm10, BSgenome.Hsapiens.UCSC.hg38, networkD3, knitr, rmarkdown, ggrastr
+Suggests: BSgenome.Mmusculus.UCSC.hg19, BSgenome.Mmusculus.UCSC.mm10, BSgenome.Hsapiens.UCSC.hg38, networkD3, knitr, rmarkdown, ggrastr
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Encoding: UTF-8

@@ -3,15 +3,15 @@ citHeader("To cite FigR in publications please use:")
 citEntry(
   entry    = "Article",
   title    = "Functional Inference of Gene Regulation using Single-Cell Multi-Omics",
-  author   = "Vinay Kartha et al.",
-  journal  = "BiorXiv preprint",
-  year     = "2021",
-  volume   = "",
-  number   = "",
-  pages    = "",
-  url      = "https://www.biorxiv.org/content/10.1101/2021.07.28.453784v1",
+  author   = "Vinay K. Kartha et al.",
+  journal  = "Cell Genomics",
+  year     = "2022",
+  volume   = "2",
+  number   = "9",
+  pages    = "100166",
+  url      = "https://www.sciencedirect.com/science/article/pii/S2666979X22001082",
   textVersion = paste(
-"Kartha, VK. et al. Functional Inference of Gene Regulation using Single-Cell Multi-Omics. BioRxiv (2021)"
+"Kartha, VK. et al. Functional Inference of Gene Regulation using Single-Cell Multi-Omics. Cell Genomics (2022)"
   )
 )
 
