@@ -135,6 +135,7 @@ runFigRGRN <- function(ATAC.se, # SE of scATAC peak counts. Needed for chromVAR 
   opts <- list(progress = progress)
   time_elapsed <- Sys.time()
   cl <- parallel::makeCluster(nCores)
+  clusterEvalQ(cl, .libPaths())
   doSNOW::registerDoSNOW(cl)
   mZtest.list <- foreach(g=dorcGenes,
                          .options.snow = opts,
