@@ -588,10 +588,10 @@ pairCells <- function(ATAC,
   pair.df$dist <- apply(pair.df,1,function(x) { euc.dist(ATAC[x[1],1:ncol(ATAC)],RNA[x[2],1:ncol(RNA)])})
 
   if(nrow(ATAC) > nrow(RNA)) {
-    pair.df <- pair.df %>% group_by(ATAC) %>% filter(dist==min(dist))
+    pair.df <- pair.df %>% dplyr::group_by(ATAC) %>% dplyr::filter(dist==min(dist))
     stopifnot(all.unique(pair.df$ATAC))
   } else {
-    pair.df <- pair.df %>% group_by(RNA) %>% filter(dist==min(dist))
+    pair.df <- pair.df %>% dplyr::group_by(RNA) %>% dplyr::filter(dist==min(dist))
     stopifnot(all.unique(pair.df$RNA))}
   }
 

@@ -302,13 +302,13 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
   if (keepPosCorOnly){
     # Filter to positive correlations
     cat("Only considering positive correlations ..\n")
-    dorcTab <- dorcTab %>% filter(rObs > 0)
+    dorcTab <- dorcTab %>% dplyr::filter(rObs > 0)
   }
 
   if(!keepMultiMappingPeaks){
   # Remove multi-mapping peaks (force 1-1 mapping)
   cat("Keeping max correlation for multi-mapping peaks ..\n")
-  dorcTab <- dorcTab %>% group_by(Peak) %>% filter(rObs==max(rObs))
+  dorcTab <- dorcTab %>% dplyr::group_by(Peak) %>% dplyr::filter(rObs==max(rObs))
   }
 
   # Swap gene number for gene symbol from TSS annotation lookup
