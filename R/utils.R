@@ -46,11 +46,11 @@ centerCounts <- function(obj,
                          chunkSize=1000){
   # Check if SE or Matrix
   # Added to avoid error https://github.com/buenrostrolab/FigR/issues/16
-  if(any(sapply(c("SummarizedExperiment","RangedSummarizedExperiment"),function(x){ inherits(x,obj)}))){
+  if(any(sapply(c("SummarizedExperiment","RangedSummarizedExperiment"),function(x){ inherits(obj,x)}))){
     cat("SummarizedExperiment object input detected .. Centering counts under assay")
     isSE <- TRUE
   } else {
-    if(any(sapply(c("dgCMatrix","dgeMatrix","Matrix"),function(x){ inherits(x,obj)}))){
+    if(any(sapply(c("dgCMatrix","dgeMatrix","Matrix"),function(x){ inherits(obj,x)}))){
       cat("Matrix object input detected")
       isSE <- FALSE
     } else {
