@@ -44,8 +44,22 @@ splitAndFetch <- function(vec,
 centerCounts <- function(obj,
                          doInChunks=TRUE,
                          chunkSize=1000){
-  if(!class(obj) %in% c("SummarizedExperiment","RangedSummarizedExperiment","dgCMatrix","dgeMatrix","Matrix"))
-    stop("Supplied object must be either of class SummarizedExperiment or sparse Matrix ..\n")
+  # Check if SE or Matrix
+  # Added to avoid error https://github.com/buenrostrolab/FigR/issues/16
+  if(any(sapply(c("SummarizedExperiment","RangedSummarizedExperiment"),function(x){ inherits(x,obj)}))){
+    cat("SummarizedExperiment object input detected .. Centering counts under assay")
+    isSE <- TRUE
+  } else {
+    if(any(sapply(c("dgCMatrix","dgeMatrix","Matrix"),function(x){ inherits(x,obj)}))){
+      cat("Matrix object input detected")
+      isSE <- FALSE
+    } else {
+      stop("Supplied object must be either of class SummarizedExperiment or Matrix ..\n")
+    }
+  }
+
+  #if(!class(obj) %in% c("SummarizedExperiment","RangedSummarizedExperiment","dgCMatrix","dgeMatrix","Matrix"))
+
 
   if(ncol(obj) > 10000)
     doInChunks <- TRUE
@@ -71,7 +85,8 @@ centerCounts <- function(obj,
 
     cat("Computing centered counts for cells: ",beginning," to ", ending,"..\n")
 
-    if(class(obj) == "RangedSummarizedExperiment" | class(obj)=="SummarizedExperiment"){
+    #if(class(obj) == "RangedSummarizedExperiment" | class(obj)=="SummarizedExperiment"){
+    if(isSE){
       m <- SummarizedExperiment::assay(obj[, beginning:ending])} else {
         m <- obj[,beginning:ending] # Assumes Matrix format
       }
@@ -89,7 +104,8 @@ centerCounts <- function(obj,
   centered.counts <- do.call("cbind",counts.l)
   cat("Done!\n")
 
-  if(class(obj) == "RangedSummarizedExperiment" | class(obj)=="SummarizedExperiment"){
+  #if(class(obj) == "RangedSummarizedExperiment" | class(obj)=="SummarizedExperiment"){
+  if(isSE){
     SummarizedExperiment::assay(obj) <- centered.counts
     return(obj)
   } else {
