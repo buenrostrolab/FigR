@@ -81,7 +81,7 @@ fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) +
 
 ### What reference genomes does FigR currently support?
 
-FigR currently has built in support for human reference genomes hg19 and hg38, and mouse reference genome mm10. We will soon provide support for user-defined input genome objects (has to be supported by the `BSgenome` suite of packages) as well as TSS gene objects (of class `GRanges`). Users are responsible for ensuring the right reference genome object is paired with the appropriate TSS gene object, if specified 
+FigR currently has built in support for human reference genomes hg19 and hg38, and mouse reference genome mm10. We will soon provide support for user-defined input genome objects (has to be supported by the `BSgenome` suite of packages) as well as objects with TSS coordinates per gene (of class `GRanges`). Users are responsible for ensuring the right reference genome object is paired with the appropriate TSS gene object, if specified 
 
 # About
 
