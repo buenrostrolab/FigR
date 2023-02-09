@@ -395,6 +395,12 @@ plotfigRHeatmap <- function(figR.d,
 #'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param weight.edge boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
+#'@param TFnodecol character specifying valid color name to use for TF nodes. Default is Tomato
+#'@param DORCnodecol character specifying valid color name to use for DORC nodes. Default is Sky Blue
+#'@param posEdgecol character specifying valid color name to use for Activating edges between TFs and DORCs. Default is Forest Green
+#'@param negEdgecol character specifying valid color name to use for Repressive edges between TFs and DORCs. Default is Purple
+#'@param labelSize numeric specifying font size to use for all labels. Default is 13
+#'@param showLegend boolean indicating whether to show color legend. Default is TRUE
 #'@return a network plot of the resulting filtered TF-DORC associations
 #'@import dplyr networkD3 BuenColors scales reshape2 tibble circlize
 #'@export
@@ -403,7 +409,13 @@ plotfigRNetwork <- function(figR.d,
                         score.cut=1,
                         DORCs=NULL,
                         TFs=NULL,
-                        weight.edges=FALSE){
+                        weight.edges=FALSE,
+                        TFnodecol='Tomato',
+                        DORCnodecol='Sky Blue',
+                        posEdgecol='Forest Green',
+                        negEdgecol='Purple',
+                        labelSize=13,
+                        showLegend=TRUE){
 # Network view
 
 # Filter
@@ -434,7 +446,8 @@ links <- data.frame(source=unlist(lapply(edges$Motif, function(x) {which(nodes$n
 links$Value <- scales::rescale(edges$Score)*20
 
 # Set of colors you can choose from for TF/DORC nodes
-colors <- c("Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Tomato", "Forest Green", "Sky Blue","Gray","Steelblue3","Firebrick2","Brown")
+#colors <- c("Red", "Orange", "Yellow", "Green", "Blue", "Purple", "Tomato", "Forest Green", "Sky Blue","Gray","Steelblue3","Firebrick2","Brown")
+colors=c(TFnodecol,DORCnodecol,posEdgecol,negEdgecol)
 nodeColorMap <- data.frame(color = colors, hex = gplots::col2hex(colors))
 
 getColors <- function(tfColor, dorcColor = NULL) {
@@ -465,10 +478,10 @@ networkD3::forceNetwork(Links = links,
              zoom = TRUE,
              bounded = TRUE,
              charge = -15,
-             fontSize = 13,
-             legend = TRUE,
-             colourScale = getColors(tfColor = "Tomato",dorcColor =  "Sky Blue"), # TF then DORC
-             linkColour = ifelse(links$corr > 0, as.character(nodeColorMap[nodeColorMap$color=="Forest Green",]$hex),
-                                 as.character(nodeColorMap[nodeColorMap$color=="Purple",]$hex)))
+             fontSize = labelSize,
+             legend = showLegend,
+             colourScale = getColors(tfColor = TFnodecol,dorcColor =  DORCnodecol), # TF then DORC
+             linkColour = ifelse(links$corr > 0, as.character(nodeColorMap[nodeColorMap$color==posEdgecol,]$hex),
+                                 as.character(nodeColorMap[nodeColorMap$color==negEdgecol,]$hex)))
 
 }

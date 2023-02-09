@@ -9,7 +9,13 @@ plotfigRNetwork(
   score.cut = 1,
   DORCs = NULL,
   TFs = NULL,
-  weight.edges = FALSE
+  weight.edges = FALSE,
+  TFnodecol = "Tomato",
+  DORCnodecol = "Sky Blue",
+  posEdgecol = "Forest Green",
+  negEdgecol = "Purple",
+  labelSize = 13,
+  showLegend = TRUE
 )
 }
 \arguments{
@@ -20,6 +26,18 @@ plotfigRNetwork(
 \item{DORCs}{character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)}
 
 \item{TFs}{character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)}
+
+\item{TFnodecol}{character specifying valid color name to use for TF nodes. Default is Tomato}
+
+\item{DORCnodecol}{character specifying valid color name to use for DORC nodes. Default is Sky Blue}
+
+\item{posEdgecol}{character specifying valid color name to use for Activating edges between TFs and DORCs. Default is Forest Green}
+
+\item{negEdgecol}{character specifying valid color name to use for Repressive edges between TFs and DORCs. Default is Purple}
+
+\item{labelSize}{numeric specifying font size to use for all labels. Default is 13}
+
+\item{showLegend}{boolean indicating whether to show color legend. Default is TRUE}
 
 \item{weight.edge}{boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE}
 }
