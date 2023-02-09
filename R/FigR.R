@@ -394,7 +394,7 @@ plotfigRHeatmap <- function(figR.d,
 #'@param score.cut numeric specifying the absolute regulation score to threshold TF-DORC connections on. Default is 1
 #'@param DORCs character specifying valid DORC gene symbols to subset heatmap to. Default is NULL (no subsetting)
 #'@param TFs character specifying valid TF gene symbols to subset heatmap to. Default is NULL (no subsetting)
-#'@param weight.edge boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
+#'@param weight.edges boolean specifying whether or not to weight edges by FigR regulation score. Default is FALSE
 #'@param TFnodecol character specifying valid color name to use for TF nodes. Default is Tomato
 #'@param DORCnodecol character specifying valid color name to use for DORC nodes. Default is Sky Blue
 #'@param posEdgecol character specifying valid color name to use for Activating edges between TFs and DORCs. Default is Forest Green
