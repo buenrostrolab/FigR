@@ -79,13 +79,17 @@ fig.d %>% ggplot(aes(Corr.log10P,Enrichment.log10P,color=Score)) +
 
 ```
 
+### What reference genomes does FigR currently support?
+
+FigR currently has built in support for human reference genomes hg19 and hg38, and mouse reference genome mm10. We will soon provide support for user-defined input genome objects (has to be supported by the `BSgenome` suite of packages) as well as TSS gene objects (of class `GRanges`). Users are responsible for ensuring the right reference genome object is paired with the appropriate TSS gene object, if specified 
+
 # About
 
-We are actively developing this package and will include additional detailed vignettes soon!
+We are actively updating this package to help with user requests!
 
 Please visit our [documentation website](https://buenrostrolab.github.io/FigR/) for more details on examples and functions that the FigR package supports.
 
-You may also directly check out our walkthroughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
+You may also directly check out our walk-throughs on applying the FigR framework to multi-modal and independently derived scATAC-seq / scRNA-seq data by clicking on the links below:
 
 <p align="left">
 <a href="https://htmlpreview.github.io/?https://raw.githubusercontent.com/buenrostrolab/FigR/master/vignettes/web_only/FigR_shareseq_tutorial.html"><img src="man/figures/skinv2.png"  title="FigR on SHARE-seq mouse skin data" height="30%" width="35%"></a>
