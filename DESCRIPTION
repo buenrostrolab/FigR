@@ -12,7 +12,7 @@ URL: https://buenrostrolab.github.io/FigR/
 BugReports: https://github.com/buenrostrolab/FigR/issues
 Imports: Matrix, SummarizedExperiment, GenomicRanges, dplyr, ggplot2, chromVAR, doParallel, doSNOW, ggrepel, ComplexHeatmap, BuenColors, pbmcapply, tibble, scales, reshape2, Rmpfr, optmatch, FNN
 Depends: Matrix, SummarizedExperiment, dplyr, ggplot2, cowplot, chromVAR, motifmatchr
-Suggests: BSgenome.Mmusculus.UCSC.hg19, BSgenome.Mmusculus.UCSC.mm10, BSgenome.Hsapiens.UCSC.hg38, networkD3, knitr, rmarkdown, ggrastr
+Suggests: BSgenome.Mmusculus.UCSC.mm10, BSgenome.Hsapiens.UCSC.hg38, networkD3, knitr, rmarkdown, ggrastr
 VignetteBuilder: knitr
 License: MIT + file LICENSE
 Encoding: UTF-8
