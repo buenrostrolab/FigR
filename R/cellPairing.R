@@ -172,10 +172,18 @@ umap_knn_graph <-function(x, #Input data on which we compute the knn graph
 
   # We make the graph undirected (make the adjacency matrix a symmetric matrix)
   knn_adj_mtx <- knn_adj_mtx + t(knn_adj_mtx)
-
-  # Initialize a graph object using the adjacency matrix
-  knn_graph <- graph_from_adjacency_matrix(knn_adj_mtx, mode = "undirected")
-  rm(knn_adj_mtx)
+  
+  if (dim(knn_adj_mtx)[1] > 20000){
+  sparse_matrix <- as(knn_adj_mtx, "sparseMatrix")
+    # Initialize a graph object using the adjacency matrix
+    knn_graph <- graph_from_adjacency_matrix(sparse_matrix, mode = "undirected")
+    rm(knn_adj_mtx)
+    rm(sparse_matrix)
+  } else {
+    knn_graph <- graph_from_adjacency_matrix(knn_adj_mtx, mode = "undirected")
+    rm(knn_adj_mtx)
+  }
+  rm(sparse_matrix)
 
   knn_graph
 }
