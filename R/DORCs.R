@@ -185,7 +185,7 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
   cat("Number of genes in RNA data:",nrow(RNAmat),"\n")
 
 
-  if (!genome %in% c("hg19", "hg38", "mm10"))
+  if (!genome %in% c("hg19", "hg38", "mm10","mm39"))
     stop("You must specify one of hg19, hg38 or mm10 as a genome build for currently supported TSS annotations..\n")
   switch(genome, hg19 = {
     TSSg <- FigR::hg19TSSRanges
@@ -193,6 +193,8 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
     TSSg <- FigR::hg38TSSRanges
   }, mm10 = {
     TSSg <- FigR::mm10TSSRanges
+  }, mm39={
+    TSSg <- FigR::mm39TSSRanges
   })
 
   # Keep genes that have annotation and are in RNA matrix
@@ -255,6 +257,8 @@ runGenePeakcorr <- function(ATAC.se, # SummarizedExperiment object of scATAC dat
       myGenome <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
     if(genome %in% "hg38")
       myGenome <- BSgenome.Hsapiens.UCSC.hg38::BSgenome.Hsapiens.UCSC.hg38
+	if(genome %in% "mm39")
+      myGenome <- BSgenome.Mmusculus.UCSC.mm39::BSgenome.Mmusculus.UCSC.mm39
 
     ATAC.se <- chromVAR::addGCBias(ATAC.se,genome=myGenome) }
 
